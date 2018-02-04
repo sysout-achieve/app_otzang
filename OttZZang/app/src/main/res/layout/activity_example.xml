@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/picture1"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_weight="1"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/outer1" />
+
+
+    <TableLayout
+        android:id="@+id/table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="7">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <Button
+                android:id="@+id/camera_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="촬영"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/item_example"
+                android:layout_width="137dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="5"
+                android:ems="10"
+                android:hint="제품명"
+                android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/image_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이미지추가"
+                android:layout_weight="3"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/length0"
+                android:layout_width="92dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="3"
+                android:text="size"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu" />
+
+            <EditText
+                android:id="@+id/length001"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:ems="10"
+                android:hint="사이즈 입력"
+                android:inputType="textPersonName" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/length1"
+                android:layout_width="92dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="총장"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/length11"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="총장 입력"
+                android:inputType="textPersonName"
+                android:layout_weight="5" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/length2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="어깨너비"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/length22"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="어깨너비 입력"
+                android:inputType="textPersonName"
+                android:layout_weight="5"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/length3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="가슴단면"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/length33"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="가슴단면 입력"
+                android:inputType="textPersonName"
+                android:layout_weight="5"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/length4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="소매길이"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/length44"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="소매길이 입력"
+                android:inputType="textPersonName"
+                android:layout_weight="5"/>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="phone"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/phone_num"
+                style="@android:style/Widget.AutoCompleteTextView"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:ems="10"
+                android:hint="쇼핑몰 연락처 입력"
+                android:inputType="textPersonName"
+                android:text="010-3488-0906" />
+
+            <Button
+                android:id="@+id/call_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전화걸기"
+                android:layout_weight="3"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="368dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="link"
+                android:textAppearance="@style/TextAppearance.AppCompat.Menu"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/link_text"
+                android:layout_width="176dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:ems="10"
+                android:hint="http://를 포함한 쇼핑몰 링크 입력"
+                android:inputType="textPersonName"
+                android:text="http://store.musinsa.com/app/product/detail/641509/0" />
+
+            <Button
+                android:id="@+id/link_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="링크연결"
+                android:layout_weight="3"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:id="@+id/save_btn_board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="저장하기" />
+
+</android.widget.LinearLayout>
