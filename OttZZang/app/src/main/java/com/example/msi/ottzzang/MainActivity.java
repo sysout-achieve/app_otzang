@@ -2,7 +2,9 @@ package com.example.msi.ottzzang;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -31,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         if(!listPermissionsNeeded.isEmpty()){        //권한을 요청함
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),1);
         }
-
     }
 
 
@@ -41,33 +42,62 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         requirePermission(); //메소드 실행
 
+        final SharedPreferences ID = getSharedPreferences("ID", MODE_PRIVATE);
+//        SharedPreferences.Editor ID_editor = ID.edit();
+        final SharedPreferences name = getSharedPreferences("name", MODE_PRIVATE);
+//        SharedPreferences.Editor edit_name = name.edit();
+        final SharedPreferences password = getSharedPreferences("password", MODE_PRIVATE);
+//        SharedPreferences.Editor edit_passwrod = password.edit();
+        SharedPreferences email = getSharedPreferences("Email", MODE_PRIVATE);
+//        SharedPreferences.Editor edit_email = email.edit();
+
         final EditText id = (EditText) findViewById(R.id.id);//
-        final EditText password = (EditText) findViewById(R.id.password);
+        final EditText password_txt = (EditText) findViewById(R.id.password);
         Button login_btn = (Button) findViewById(R.id.login_btn);
         Button join_btn = (Button) findViewById(R.id.join_btn);
 
         login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(password.getText().toString().equals("1234")) {
-                    String name1 = id.getText().toString();
+                String ch_ID = id.getText().toString();
+                String ch_password = password_txt.getText().toString();
 
+                if(ID.getString(ch_ID,"noid").equals("noid")) {
+                    Toast.makeText(MainActivity.this, "아이디 혹은 비밀번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
+                } else if( password.getString(ch_ID,"nopass").equals(ch_password)) {
+                    String name1 = name.getString(ch_ID, "");
 
                     Intent intent = IntentBuilder.build(v.getContext(), SubMainActivity.class);
-                    //Intent intent = new Intent(v.getContext(), SubMainActivity.class);
+                    intent.putExtra("login_id", ch_ID);
                     intent.putExtra("name1", name1);
+
                     startActivity(intent);
                     finish();
-
                 } else {
                     Toast.makeText(MainActivity.this, "아이디 혹은 비밀번호가 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
+
+        join_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, JoinActivity.class);
+                startActivityForResult(intent,010);
+            }
+        });
+
+
+
+
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 010 && resultCode == 010){
+            Toast.makeText(MainActivity.this, "가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

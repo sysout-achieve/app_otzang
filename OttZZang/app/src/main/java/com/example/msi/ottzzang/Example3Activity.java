@@ -29,7 +29,7 @@ import java.util.Date;
 
 public class Example3Activity extends AppCompatActivity {
 
-
+        ArrayList<OuterItem> data;
         private String mCurrentPhotoPath;
         int camera_code = 10;
         int gallery_code = 20;
@@ -48,20 +48,9 @@ public class Example3Activity extends AppCompatActivity {
         }
     }
 
-//    public void click_call(Button btn, final EditText text){
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String number = text.getText().toString();
-//
-//                Intent intent = new Intent();
-//                intent.setAction(Intent.ACTION_DIAL);
-//                intent.setData(Uri.parse("tel:"+number));
-//                startActivity(intent);
-//
-//            }
-//        });
-//    }
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +59,9 @@ public class Example3Activity extends AppCompatActivity {
 
         requirePermission();
 
-        Intent intent = getIntent();
-        int create_times = intent.getIntExtra("outer_times", 0);
-        if(create_times==0 ) {
-            Toast.makeText(Example3Activity.this, "제품의 정보를 저장하여 인터넷 쇼핑에 활용해보세요.", Toast.LENGTH_SHORT).show();
-        }
-
 
         Button camera_btn = (Button) findViewById(R.id.camera_btn);
-        final ImageView picture = (ImageView) findViewById(R.id.picture);
+        final ImageView picture = (ImageView) findViewById(R.id.picture_upda);
         final EditText length00 = (EditText) findViewById(R.id.length00);
         final EditText item1 = (EditText) findViewById(R.id.item1);
         TableLayout table = (TableLayout) findViewById(R.id.table);
@@ -86,8 +69,12 @@ public class Example3Activity extends AppCompatActivity {
         final EditText link_text = (EditText) findViewById(R.id.link_text);
         Button call_btn = (Button) findViewById(R.id.call_btn);
         Button link_btn = (Button) findViewById(R.id.link_btn);
-        Button save_btn = (Button) findViewById(R.id.save_btn_board);
+        Button save_btn = (Button) findViewById(R.id.save_btn_profile);
         Button image_btn = (Button) findViewById(R.id.image_btn);
+
+
+            Toast.makeText(Example3Activity.this, "제품의 정보를 저장하여 인터넷 쇼핑에 활용해보세요.", Toast.LENGTH_SHORT).show();
+
 
         image_btn.setOnClickListener(new View.OnClickListener() { //이미지 추가 버튼 클릭시
             @Override
@@ -158,19 +145,25 @@ public class Example3Activity extends AppCompatActivity {
 
                 String item_name = item1.getText().toString();
                 String size = length00.getText().toString();
-//                BitmapDrawable d= (BitmapDrawable)((ImageView)v.findViewById(R.id.picture)).getDrawable();
-//                Bitmap b = d.getBitmap();
-//                picture.setImageBitmap(b);
-                Intent intent_save = new Intent();
-                String[] send = new String[]{item_name, size};
+                if( item_name.equals("") ) {
+                    Toast.makeText(Example3Activity.this, "제품명을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                } else if( size.equals("") ){
+                    Toast.makeText(Example3Activity.this, "size를 입력해주세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Bitmap bitmap = ((BitmapDrawable) picture.getDrawable()).getBitmap();
+                    Bitmap resized = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
+                    Intent intent_save = new Intent();
+                    String[] send = new String[]{item_name, size};
 
-                intent_save.putExtra("send1", send);
-//                intent_save.putExtra("bm", (Bitmap)b);
-                setResult(5, intent_save);
-                finish();
+                    intent_save.putExtra("send2", send);
+                    intent_save.putExtra("bm", (Bitmap) resized);
+                    setResult(5, intent_save);
+                    finish();
+                }
+
             }
         });
-    }
+    } //onCreate of End.
 
     private File createImageFile() throws IOException { //https://developer.android.com/training/camera/photobasics.html 라이브러리 이용
         // Create an image file name
@@ -191,13 +184,14 @@ public class Example3Activity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == camera_code){
-            ImageView picture = (ImageView) findViewById(R.id.picture);
+            ImageView picture = (ImageView) findViewById(R.id.picture_upda);
             picture.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
         }
         if(requestCode == gallery_code && resultCode == RESULT_OK){
             Uri uri = data.getData();
-            ImageView picture = (ImageView) findViewById(R.id.picture);
+            ImageView picture = (ImageView) findViewById(R.id.picture_upda);
             picture.setImageURI(uri);
+
         }
     }
 
@@ -207,5 +201,4 @@ public class Example3Activity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent, gallery_code);
     }
-
 }

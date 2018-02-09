@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,15 +25,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class OuterActivity extends AppCompatActivity {
-
+            int checked1;
             int outer_times = 0;
             int restart_i =0;
             int outerrequest_code = 1;
             int outermake_code = 5;
-    ArrayList<String> list_item_name1 = new ArrayList<>();
-    ArrayList<String> list_item_size1 = new ArrayList<>();
-    ArrayList<Bitmap> list_item_img1 = new ArrayList<>();
-    outerAdapter adapter = new outerAdapter(this, list_item_img1, list_item_name1, list_item_size1);
+    ArrayList<OuterItem> data = new ArrayList<>();
+    outerAdapter adapter = new outerAdapter(this, R.layout.listview_outer, data);
 
     @Override
     protected void onStart() {
@@ -47,20 +46,6 @@ public class OuterActivity extends AppCompatActivity {
         }
     }
 
-    private int setSimpleSize(BitmapFactory.Options options, int requestWidth, int requestHeight){
-        int originalWidth = options.outWidth;
-        int originalHeight = options.outHeight;
-        int size = 1;
-
-        while (requestHeight<originalHeight || requestWidth<originalWidth){
-            originalHeight = originalHeight/2;
-            originalWidth = originalWidth/2;
-            size = size*2;
-        }
-        return size;
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,49 +53,46 @@ public class OuterActivity extends AppCompatActivity {
 
         TextView example = (TextView) findViewById(R.id.example);
         ImageButton plus_btn = (ImageButton) findViewById(R.id.plus_btn);
-        ImageView picture = (ImageView) findViewById(R.id.picture);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        Resources res = this.getResources(); //bitmap으로 이미지 넣을 때
-        Bitmap bitmap = BitmapFactory.decodeFile("",options);
-
-        options.inSampleSize = setSimpleSize(options, 500, 500);
-        options.inJustDecodeBounds = false;
+        ImageView picture = (ImageView) findViewById(R.id.picture_upda);
 
 
-//        Bitmap bitmap1 = BitmapFactory.decodeResource(res, R.drawable.coat1);
-//
-//
-//        //Arraylist 생성
-//
-//        list_item_img.add(bitmap);
-//        list_item_img.add(bitmap1);
+        final ListView listView = (ListView) findViewById(R.id.listview);
+        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.longpadding);
+        Bitmap resized1 = Bitmap.createScaledBitmap(bitmap1, 300, 400, true);
+        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.parka);
+        Bitmap resized2 = Bitmap.createScaledBitmap(bitmap2, 300, 400, true);
+        Bitmap bitmap3 = BitmapFactory.decodeResource(getResources(),R.drawable.coat1);
+        Bitmap resized3 = Bitmap.createScaledBitmap(bitmap3, 300, 400, true);
+        Bitmap bitmap4 = BitmapFactory.decodeResource(getResources(),R.drawable.coat2);
+        Bitmap resized4 = Bitmap.createScaledBitmap(bitmap4, 300, 400, true);
+        Bitmap bitmap5 = BitmapFactory.decodeResource(getResources(),R.drawable.padding);
+        Bitmap resized5 = Bitmap.createScaledBitmap(bitmap5, 300, 400, true);
+        OuterItem outerItem1 = new OuterItem(resized1, "롱패딩", "L");
+        OuterItem outerItem2 = new OuterItem(resized2, "개파카", "M");
+        OuterItem outerItem3 = new OuterItem(resized3, "코트1", "M");
+        OuterItem outerItem4 = new OuterItem(resized4, "코트2", "L");
+        OuterItem outerItem5 = new OuterItem(resized5, "패딩", "M");
 
+        data.add(outerItem1);
+        data.add(outerItem2);
+        data.add(outerItem3);
+        data.add(outerItem4);
+        data.add(outerItem5);
 
-        list_item_name1.add("롱패딩");
-        list_item_name1.add("코트1");
-        list_item_name1.add("코트2");
-        list_item_name1.add("개파카");
-        list_item_name1.add("패딩");
-
-        list_item_size1.add("M");
-        list_item_size1.add("L");
-        list_item_size1.add("L");
-        list_item_size1.add("M");
-        list_item_size1.add("M");
-
-        list_item_img1.add(bitmap);
-        list_item_img1.add(bitmap);
-        list_item_img1.add(bitmap);
-        list_item_img1.add(bitmap);
-        list_item_img1.add(bitmap);
-        ListView listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(adapter);
 
 
-
-        adapter.notifyDataSetChanged();
-
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                checked1 = listView.getCheckedItemPosition();
+                Intent intent = new Intent(getApplicationContext(), Example_modifyActivity.class);
+                intent.putExtra("profile", data.get(position).getProfile());
+                intent.putExtra("outer_info", data.get(position).getOuter_info());
+                intent.putExtra("outer_size", data.get(position).getOuter_size());
+                startActivityForResult(intent, 33);
+            }
+        });
 
         plus_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,24 +115,33 @@ public class OuterActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {  // Activityforresult를 이용해서 값을 반환받음
-        if(requestCode == outerrequest_code && resultCode == 1){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data_intent) {  // Activityforresult를 이용해서 값을 반환받음
+        int outercode_modi=33;
+        if(requestCode == outerrequest_code && resultCode == 1){ // 예제 버튼 클릭 후 저장했을 때
             TextView example = (TextView) findViewById(R.id.example);
-            example.setText(data.getStringExtra("item_name"));
+            example.setText(data_intent.getStringExtra("item_name"));
             Toast.makeText(OuterActivity.this, "저장이 완료되었습니다.", Toast.LENGTH_SHORT).show();
-        } else if(requestCode == outermake_code && resultCode == 5){
+        } else if(requestCode == outercode_modi && resultCode == 5) { //outer 수정버튼 클릭 시
+            String[] send = data_intent.getStringArrayExtra("send1");
+            Bitmap bm = (Bitmap)data_intent.getParcelableExtra("bm");
 
-
-            String[] send = data.getStringArrayExtra("send1");
-            Bitmap receive_b = (Bitmap)data.getExtras().get("bm");
-            list_item_img1.add(receive_b);
-            list_item_name1.add(send[0]);
-            list_item_size1.add(send[1]);
-
+            OuterItem outerItem = new OuterItem(bm, send[0], send[1]);
+            data.set(checked1, outerItem);
             adapter.notifyDataSetChanged();
 
-          // 여기서부터 다시해라 if ()
+            Toast.makeText(OuterActivity.this, "항목이 수정되었습니다.", Toast.LENGTH_SHORT).show();
+        } else if(requestCode == outercode_modi && resultCode ==55) {  //outer 삭제 버튼 클릭 시
+            data.remove(checked1);
+            adapter.notifyDataSetChanged();
+        } else if(requestCode == outermake_code && resultCode == 5){ //새로운 항목 추가 버튼 후 저장했을 때
+            String[] send = data_intent.getStringArrayExtra("send2");
+            Bitmap bm = (Bitmap) data_intent.getParcelableExtra("bm");
+
+            OuterItem outerItem = new OuterItem(bm, send[0], send[1]);
+            data.add(outerItem);
+            adapter.notifyDataSetChanged();
             Toast.makeText(OuterActivity.this, "항목이 추가되었습니다.", Toast.LENGTH_SHORT).show();
+
 
         } else {
             Toast.makeText(OuterActivity.this, "저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
@@ -159,29 +150,27 @@ public class OuterActivity extends AppCompatActivity {
 
     // listview 사용
     public class outerAdapter extends BaseAdapter{
+        Context context;
+        private LayoutInflater inflater;
+        public ArrayList<OuterItem> data;
+        private int layout;
 
-        Context context_list;
-//        ArrayList list_item_img;
-//        ArrayList<String> list_item_name;
-//        ArrayList<String> list_item_size;
-
-        public outerAdapter(Context context, ArrayList list_item_img, ArrayList list_item_name, ArrayList list_item_size){ //outer 이미지 값이 없음
-            this.context_list = context;
-            list_item_img1 =  list_item_img;
-            list_item_name1 = list_item_name;
-            list_item_size1 = list_item_size;
+        public outerAdapter(Context context, int layout, ArrayList<OuterItem> data ){ //outer 이미지 값이 없음
+           this.context = context;
+          this.data = data;
+          this.layout = layout;
         }
 
 
 
         @Override
         public int getCount() {
-            return list_item_name1.size();
+            return data.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return list_item_name1.get(position);
+            return data.get(position).getOuter_info();
         }
 
         @Override
@@ -196,42 +185,20 @@ public class OuterActivity extends AppCompatActivity {
 
 
             if(convertView == null){
-                LayoutInflater inflater = LayoutInflater.from(context_list);
-                convertView = inflater.inflate(R.layout.listview_outer, null);
+                this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = inflater.inflate(layout, parent, false);
             }
+            OuterItem outerItem = data.get(position);
+
             ImageView img_outer = (ImageView) convertView.findViewById(R.id.img_outer);
+            img_outer.setImageBitmap(outerItem.getProfile());
+
             TextView listview_name = (TextView) convertView.findViewById(R.id.listview_name);
+            listview_name.setText(outerItem.getOuter_info());
+
             TextView listview_size = (TextView) convertView.findViewById(R.id.listview_size);
-//            ImageView picture = (ImageView) findViewById(R.id.picture);
-            BitmapFactory.Options options = new BitmapFactory.Options();
+            listview_size.setText(outerItem.getOuter_size());
 
-
-            listview_name.setText(list_item_name1.get(position));
-            listview_size.setText(list_item_size1.get(position));
-
-//            list_item_img1.add(0,R.drawable.longpadding);
-//            list_item_img1.add(1,R.drawable.coat1);
-//            list_item_img1.add(2,R.drawable.coat2);
-//            list_item_img1.add(3,R.drawable.parka);
-//            list_item_img1.add(4,R.drawable.padding);
-//            exercise_list_photo.setImageBitmap(BitmapFactory.decodeFile("" + this.exercise_list_photo.get(position).toString(), options));
-
-//            if("롱패딩".equals(list_item_name1.get(position))) {
-//                img_outer.setImageResource(R.drawable.longpadding);
-//            } else if("코트1".equals(list_item_name1.get(position))){
-//                img_outer.setImageResource(R.drawable.coat1);
-//            } else if("코트2".equals(list_item_name1.get(position))){
-//                img_outer.setImageResource(R.drawable.coat2);
-//            } else if("개파카".equals(list_item_name1.get(position))){
-//                img_outer.setImageResource((R.drawable.parka));
-//            } else if("패딩".equals(list_item_name1.get(position))) {
-//                img_outer.setImageResource(R.drawable.padding);
-//            } else if(position > 4) {
-                img_outer.setImageBitmap(BitmapFactory.decodeFile(""+list_item_img1.get(position).toString(),options));
-//            }
-//            } else {
-//                img_outer.setImageResource(R.drawable.padding);
-//            }
             return convertView;
         }
     }
