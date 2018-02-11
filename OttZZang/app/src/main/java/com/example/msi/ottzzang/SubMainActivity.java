@@ -22,12 +22,12 @@ import java.util.List;
 public class SubMainActivity extends AppCompatActivity {
     int count;
     int checked;
-    int call_value = 11;
+    int call_value ;
     int write_code = 101;
     int check_cart = 0;
     int count_cart;
     String login_id;
-    int list_count=0;
+    int list_count=11;
     int list_count_check=0;
 
     ArrayList<Integer> list_num = new ArrayList<>();
@@ -85,10 +85,21 @@ public class SubMainActivity extends AppCompatActivity {
         SharedPreferences list_count_save = getSharedPreferences("login_count", MODE_PRIVATE);
         SharedPreferences.Editor edit_list_count = list_count_save.edit();
 
-        String list = "bb";
-        int i=0;
-        SharedPreferences list_i = getSharedPreferences(list + i, MODE_PRIVATE);
+        String list = "list";
+        SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
+        SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+        SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
+        SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
+        SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+
         SharedPreferences.Editor edit_list_i = list_i.edit();
+        SharedPreferences.Editor edit_list_name = list_name.edit();
+        SharedPreferences.Editor edit_list_edti = list_esti.edit();
+        SharedPreferences.Editor edit_list_review = list_review.edit();
+        SharedPreferences.Editor edit_list_write = list_write.edit();
+        call_value = list_i.getInt("list_number_count", 11);//callvalue 다시보자
+
+
 
 //        list_count_save.getInt(login_id,0);
 //
@@ -115,17 +126,6 @@ public class SubMainActivity extends AppCompatActivity {
         list_num.add(9);
         list_num.add(10);
 
-//        list_num.add("1");
-//        list_num.add("2");
-//        list_num.add("3");
-//        list_num.add("4");
-//        list_num.add("5");
-//        list_num.add("6");
-//        list_num.add("7");
-//        list_num.add("8");
-//        list_num.add("9");
-//        list_num.add("10");
-
         list_board.add("맨투맨 편해");
         list_board.add("이 옷 진짜 예뻐요");
         list_board.add("**쇼핑몰 좋아요~");
@@ -147,6 +147,12 @@ public class SubMainActivity extends AppCompatActivity {
         list_writer.add("기계인간");
         list_writer.add("노프");
         list_writer.add("수형파트장");
+
+        for(list_count=11; list_count <= call_value; list_count=list_count+1){
+            list_num.add(list_count);
+            list_board.add(list_name.getString(String.valueOf(list_count),""));
+            list_writer.add(list_write.getString(String.valueOf(list_count),""));
+        }//일단 저장이 되는데 조금 더 보완을 생각해봅시다!!!!!!
 
         final ListView listview_cart = (ListView) findViewById(R.id.list_cart);
         listview_cart.setAdapter(cartAdapter);
@@ -204,11 +210,11 @@ public class SubMainActivity extends AppCompatActivity {
                     checked = listview.getCheckedItemPosition();
                     if (checked > -1 && checked < count) {
                         Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
-
-                        String[] renew = new String[]{list_board.get(checked), list_writer.get(checked)};
-                        intent.putExtra("renew", renew);
+                        int get_list_num = list_num.get(checked);
+//                        String[] renew = new String[]{list_board.get(checked), list_writer.get(checked)};
+//                        intent.putExtra("renew", renew);
                         intent.putExtra("login_id", login_id);
-                        intent.putExtra("checked", checked);
+                        intent.putExtra("checked", get_list_num);
                         startActivityForResult(intent, 20 );
                     }
                 }
@@ -246,12 +252,17 @@ public class SubMainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == write_code && resultCode == 10){
             String[] send = data.getStringArrayExtra("send");
-
+            SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
+            call_value = list_i.getInt("list_number_count",11);
             list_num.add(call_value);
             list_board.add(send[0]);
             list_writer.add(send[1]);
             boardAdapter.notifyDataSetChanged();
-            call_value= call_value+1;
+
+            SharedPreferences.Editor edit_list_i = list_i.edit();
+            edit_list_i.putInt("list_number_count", call_value+1);
+            edit_list_i.commit();
+
         } else if(requestCode == 20 && resultCode ==20){
             String[] resend = data.getStringArrayExtra("resend");
             list_board.set(checked, resend[0]);
