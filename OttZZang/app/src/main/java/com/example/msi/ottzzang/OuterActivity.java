@@ -2,6 +2,7 @@ package com.example.msi.ottzzang;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,10 +34,12 @@ public class OuterActivity extends AppCompatActivity {
     ArrayList<OuterItem> data = new ArrayList<>();
     outerAdapter adapter = new outerAdapter(this, R.layout.listview_outer, data);
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
-        if(restart_i == 8){     //OuterActivity 에 5번 들어올 경우 아우터에 관한 광고를 만들어 줌
+        if(restart_i == 8){     //OuterActivity 에 8번 들어올 경우 아우터에 관한 광고를 만들어 줌
             Toast.makeText(OuterActivity.this, "아우터에 관심이 많으시네요~ 이 제품들은 어떠신가요?", Toast.LENGTH_SHORT).show();
             Intent intent_ad = new Intent(OuterActivity.this, AdvertisementActivity.class);
             startActivity(intent_ad);

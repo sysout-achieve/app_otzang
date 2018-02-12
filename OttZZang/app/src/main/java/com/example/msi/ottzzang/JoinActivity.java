@@ -18,9 +18,6 @@ import java.util.ArrayList;
 public class JoinActivity extends AppCompatActivity {
         String ID_check;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +58,7 @@ public class JoinActivity extends AppCompatActivity {
 //                correct = input_id.getText().toString();
                if(input_id.getText().toString().equals("") || input_name.getText().toString().equals("") || input_password.getText().toString().equals("") ||input_email.getText().toString().equals("")) {
                    Toast.makeText(JoinActivity.this, "빈 항목을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
-               } else if (ID_check.equals(input_id.getText().toString())){
+               } else if (input_id.getText().toString().equals(ID_check)){
                    EditText input_name = (EditText) findViewById(R.id.input_name);
                    EditText input_password = (EditText) findViewById(R.id.input_password);
                    EditText input_email = (EditText) findViewById(R.id.input_email);

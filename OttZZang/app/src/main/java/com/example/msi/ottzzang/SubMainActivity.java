@@ -16,34 +16,62 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
 
 public class SubMainActivity extends AppCompatActivity {
     int count;
     int checked;
-    int call_value ;
+    int call_value; // 게시판 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_num저장
     int write_code = 101;
     int check_cart = 0;
     int count_cart;
     String login_id;
     int list_count=11;
-    int list_count_check=0;
+    int list_cart_count;
+    int cart_number =1;
+    int list_cart_total; // 찜목록 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_cart_num 저장
 
+    // board listview Item
     ArrayList<Integer> list_num = new ArrayList<>();
     ArrayList<String> list_board = new ArrayList<>();
     ArrayList<String> list_writer= new ArrayList<>();
+
+    // cart listview Item
+    ArrayList<Integer> list_cart_num = new ArrayList<>();
     ArrayList<String> list_cart = new ArrayList<>();
 
     boardAdapter boardAdapter = new boardAdapter(this, list_num, list_board, list_writer);
     cartAdapter cartAdapter = new cartAdapter(this, list_cart);
 
+//    public void make_sp(){
+//        SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
+//        SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+//        SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
+//        SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
+//        SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+//
+//        SharedPreferences.Editor edit_list_i = list_i.edit();
+//        SharedPreferences.Editor edit_list_name = list_name.edit();
+//        SharedPreferences.Editor edit_list_esti = list_esti.edit();
+//        SharedPreferences.Editor edit_list_review = list_review.edit();
+//        SharedPreferences.Editor edit_list_write = list_write.edit();
+//    }
+//
+//    public void remove_sp(){
+//
+//    }
+
+
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
-//        SharedPreferences list_count_save = getSharedPreferences("login_count", MODE_PRIVATE);
-//        SharedPreferences.Editor edit_list_count = list_count_save.edit();
-//        edit_list_count.putInt(login_id, list_count_check);
+//
 //    }
 
     @Override
@@ -51,6 +79,14 @@ public class SubMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submain);
 
+         /*Stetho----------------------------*/
+        Stetho.initializeWithDefaults(this);
+
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
+
+        /*Submain*/
         Intent intent = getIntent();
         login_id = intent.getStringExtra("login_id");
         String str = intent.getStringExtra("name1");
@@ -82,77 +118,47 @@ public class SubMainActivity extends AppCompatActivity {
         Button modify_btn = (Button) findViewById(R.id.modify_btn);
         Button delete_board_btn = (Button) findViewById(R.id.delete_board_btn);
         final SharedPreferences board = getSharedPreferences("board", MODE_PRIVATE);
-        SharedPreferences list_count_save = getSharedPreferences("login_count", MODE_PRIVATE);
-        SharedPreferences.Editor edit_list_count = list_count_save.edit();
+//        SharedPreferences list_count_save = getSharedPreferences("login_count", MODE_PRIVATE);
+//        SharedPreferences.Editor edit_list_count = list_count_save.edit();
+//
 
+
+        //리스트뷰 게시판
         String list = "list";
-        SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
-        SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+        SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
+        final SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
         SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
         SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
         SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+        SharedPreferences cart_on = getSharedPreferences("cart_on",MODE_PRIVATE);
+        SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE); //찜목록 저장 갯수와 번호순으로 저장
 
+        SharedPreferences.Editor edit_total_cart = total_list_cart.edit();
+        SharedPreferences.Editor edit_cart_on = cart_on.edit();
         SharedPreferences.Editor edit_list_i = list_i.edit();
         SharedPreferences.Editor edit_list_name = list_name.edit();
-        SharedPreferences.Editor edit_list_edti = list_esti.edit();
+        SharedPreferences.Editor edit_list_esti = list_esti.edit();
         SharedPreferences.Editor edit_list_review = list_review.edit();
         SharedPreferences.Editor edit_list_write = list_write.edit();
-        call_value = list_i.getInt("list_number_count", 11);//callvalue 다시보자
+
+        //SharedPreferences 초기화
+//        edit_total_cart.clear();
+//        edit_cart_on.clear();
+//        edit_list_i.clear();
+//        edit_list_name.clear();
+//        edit_list_esti.clear();
+//        edit_list_review.clear();
+//        edit_list_write.clear();
+//        edit_total_cart.commit();
+//        edit_cart_on.commit();
+//        edit_list_i.commit();
+//        edit_list_name.commit();
+//        edit_list_esti.commit();
+//        edit_list_review.commit();
+//        edit_list_write.commit();
 
 
 
-//        list_count_save.getInt(login_id,0);
-//
-//
-//        for( list_count=1 ;list_count <= list_count_check ; list_count=list_count+1 ){
-//            if( board.contains(login_id+list_count) == true ){
-//                if(list_cart.contains(board.getString(login_id+list_count,"noitem"))){
-//
-//                } else {
-//                    list_cart.add(board.getString(login_id+list_count, ""));
-//                    cartAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        }
-
-        list_num.add(1);
-        list_num.add(2);
-        list_num.add(3);
-        list_num.add(4);
-        list_num.add(5);
-        list_num.add(6);
-        list_num.add(7);
-        list_num.add(8);
-        list_num.add(9);
-        list_num.add(10);
-
-        list_board.add("맨투맨 편해");
-        list_board.add("이 옷 진짜 예뻐요");
-        list_board.add("**쇼핑몰 좋아요~");
-        list_board.add("삼선 슬리퍼 엄청 편해요");
-        list_board.add("츄리닝은 아디다스");
-        list_board.add("이 옷이 좋아서 매일 입어요");
-        list_board.add("옷 재질이 너무 마음에 들어요");
-        list_board.add("가성비 대박 아이템!!");
-        list_board.add("여기 옷 사지말아요 후회합니다");
-        list_board.add("코딩할 땐 후드티가 짱이야");
-
-        list_writer.add("전지웅");
-        list_writer.add("장광국");
-        list_writer.add("박지호");
-        list_writer.add("이기섭");
-        list_writer.add("김우형");
-        list_writer.add("남현수");
-        list_writer.add("허건");
-        list_writer.add("기계인간");
-        list_writer.add("노프");
-        list_writer.add("수형파트장");
-
-        for(list_count=11; list_count <= call_value; list_count=list_count+1){
-            list_num.add(list_count);
-            list_board.add(list_name.getString(String.valueOf(list_count),""));
-            list_writer.add(list_write.getString(String.valueOf(list_count),""));
-        }//일단 저장이 되는데 조금 더 보완을 생각해봅시다!!!!!!
 
         final ListView listview_cart = (ListView) findViewById(R.id.list_cart);
         listview_cart.setAdapter(cartAdapter);
@@ -160,6 +166,41 @@ public class SubMainActivity extends AppCompatActivity {
         final ListView listview = (ListView) findViewById(R.id.list_sub);
 //        final boardAdapter adapter = new boardAdapter(this, list_num, list_board, list_writer);
         listview.setAdapter(boardAdapter);
+
+        call_value = list_i.getInt("list_number_count", 1);    //게시글 총 갯수 저장하는 변수
+
+        for(list_count=1; list_count <= call_value; list_count=list_count+1){
+            list_num.add(list_count);
+            list_board.add(list_name.getString(String.valueOf(list_count),"no_content"));
+            list_writer.add(list_write.getString(String.valueOf(list_count),"no_writer"));
+            }
+
+        for(int remove_num=call_value-1; remove_num >= 0; remove_num=remove_num-1){
+            if(list_board.get(remove_num).toString() == "no_content" && list_writer.get(remove_num).toString() == "no_writer") {
+                list_num.remove(remove_num);
+                list_board.remove(remove_num);
+                list_writer.remove(remove_num);
+                boardAdapter.notifyDataSetChanged();
+            }
+        }//일단 저장이 되는데 조금 더 보완을 생각해봅시다!!!!!!
+
+
+        list_cart_total = total_list_cart.getInt("list_cart_total", 1);
+
+        //리스트뷰 찜 목록!!!!!!!!!!!!!!
+        SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+        for(list_cart_count=1; list_cart_count <= call_value; list_cart_count=list_cart_count+1){
+            list_cart_num.add(list_cart_count);
+            list_cart.add(list_id.getString(String.valueOf(list_cart_count),"no_cart"));
+        }
+        for( int remove_cart = call_value-1 ;   remove_cart >= 0 ; remove_cart=remove_cart-1){
+            if(list_cart.get(remove_cart).toString()=="no_cart"){
+                list_cart_num.remove(remove_cart);
+                list_cart.remove(remove_cart);
+                cartAdapter.notifyDataSetChanged();
+            }
+        }
+
 
         delete_board_btn.setOnClickListener(new View.OnClickListener() { //게시판 목록 삭제
             @Override
@@ -170,12 +211,36 @@ public class SubMainActivity extends AppCompatActivity {
                 if(count > 0) {
                     checked = listview.getCheckedItemPosition();
                     if(checked > -1 && checked < count){
+                        int list_delete_number = list_num.get(checked);
                         list_num.remove(checked);
                         list_board.remove(checked);
                         list_writer.remove(checked);
 
+                        SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
+                        SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+                        SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
+                        SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
+                        SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+
+                        SharedPreferences.Editor edit_list_i = list_i.edit();
+                        SharedPreferences.Editor edit_list_name = list_name.edit();
+                        SharedPreferences.Editor edit_list_esti = list_esti.edit();
+                        SharedPreferences.Editor edit_list_review = list_review.edit();
+                        SharedPreferences.Editor edit_list_write = list_write.edit();
+
+                        edit_list_name.remove(String.valueOf(list_delete_number));
+                        edit_list_esti.remove(String.valueOf(list_delete_number));
+                        edit_list_review.remove(String.valueOf(list_delete_number));
+                        edit_list_write.remove(String.valueOf(list_delete_number));
+
+                        edit_list_name.commit();
+                        edit_list_esti.commit();
+                        edit_list_review.commit();
+                        edit_list_write.commit();
+
                         listview.clearChoices();
                         boardAdapter.notifyDataSetChanged();
+                        Toast.makeText(SubMainActivity.this, list_delete_number+"번 항목을 삭제하셨습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -183,18 +248,28 @@ public class SubMainActivity extends AppCompatActivity {
 
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { //장바구니 탭에서 삭제 버튼 클릭 시
+            public void onClick(View v) { //찜목록 탭에서 삭제 버튼 클릭 시
                 count_cart = cartAdapter.getCount();
                 if(count_cart >0){
                     check_cart = listview_cart.getCheckedItemPosition();
                     if(check_cart > -1 && check_cart < count_cart){
+                        //찜목록에서 바로 찜 삭제하면 하트 지워짐
+                        int i = list_cart_num.get(check_cart);
+                        SharedPreferences cart_on = getSharedPreferences(String.valueOf(i),MODE_PRIVATE);
+                        SharedPreferences.Editor edit_cart_on = cart_on.edit();
+                        edit_cart_on.putInt(login_id, 0);
+                        edit_cart_on.commit();
+                        SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+                        SharedPreferences.Editor edit_list_cart = list_id.edit();
+                        edit_list_cart.remove(String.valueOf(i));
+                        edit_list_cart.commit();
+
+                        list_cart_num.remove(check_cart);
                         list_cart.remove(check_cart);
 
                         listview_cart.clearChoices();
                         cartAdapter.notifyDataSetChanged();
-//                        SharedPreferences.Editor edit_board = board.edit();
-//                        edit_board.remove(login_id+check_cart);         // 로그인아이디랑 숫자써서 억지로 리스트뷰 우겨넣음 arraylist이용해서 리스트뷰 정렬하는 것 고민해볼것
-//                        edit_board.commit();
+
                     }
                 }
             }
@@ -211,8 +286,7 @@ public class SubMainActivity extends AppCompatActivity {
                     if (checked > -1 && checked < count) {
                         Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
                         int get_list_num = list_num.get(checked);
-//                        String[] renew = new String[]{list_board.get(checked), list_writer.get(checked)};
-//                        intent.putExtra("renew", renew);
+
                         intent.putExtra("login_id", login_id);
                         intent.putExtra("checked", get_list_num);
                         startActivityForResult(intent, 20 );
@@ -252,8 +326,8 @@ public class SubMainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == write_code && resultCode == 10){
             String[] send = data.getStringArrayExtra("send");
-            SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
-            call_value = list_i.getInt("list_number_count",11);
+            SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
+            call_value = list_i.getInt("list_number_count",1);
             list_num.add(call_value);
             list_board.add(send[0]);
             list_writer.add(send[1]);
@@ -262,28 +336,53 @@ public class SubMainActivity extends AppCompatActivity {
             SharedPreferences.Editor edit_list_i = list_i.edit();
             edit_list_i.putInt("list_number_count", call_value+1);
             edit_list_i.commit();
-
+            Toast.makeText(this, "저장되었습니다.",Toast.LENGTH_SHORT).show();
         } else if(requestCode == 20 && resultCode ==20){
             String[] resend = data.getStringArrayExtra("resend");
             list_board.set(checked, resend[0]);
             list_writer.set(checked, resend[1]);
             boardAdapter.notifyDataSetChanged();
+
             Toast.makeText(this, "수정되었습니다.", Toast.LENGTH_SHORT).show();
 
         } else if(requestCode == 20 && resultCode == 22) {
-            SharedPreferences board = getSharedPreferences("board", MODE_PRIVATE);
-            SharedPreferences.Editor edit_board = board.edit();
-
             String cart = data.getStringExtra("cart");
-            list_cart.add(cart);
-//            edit_board.putString(login_id+list_count, cart);
-//            edit_board.commit();
-//            list_count_check= list_count_check+1;
-//            list_count = list_count+1;
+            int cart_array = data.getIntExtra("checked", 0);
 
+            SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE);
+            SharedPreferences.Editor edit_total_cart = total_list_cart.edit();
+            list_cart_total = total_list_cart.getInt("list_cart_total", 1);
+            list_cart_num.add(cart_array);
+            list_cart.add(cart);
+
+            edit_total_cart.putInt("list_cart_total",list_cart_total+1);
             cartAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "장바구니에 추가되었습니다.", Toast.LENGTH_SHORT).show();
-        } else{
+        } else if(requestCode == 20 && resultCode == 23) {
+            SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE);
+            SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+            SharedPreferences.Editor edit_list_cart = list_id.edit();
+            int cart_array = data.getIntExtra("checked", 0);
+            edit_list_cart.remove(String.valueOf(cart_array));
+
+            //항목 속 찜 버튼 해제 시
+            list_cart.clear();
+            list_cart_num.clear();
+            cartAdapter.notifyDataSetChanged();
+
+
+            for(list_cart_count=1; list_cart_count <= call_value; list_cart_count=list_cart_count+1){
+                list_cart_num.add(list_cart_count);
+                list_cart.add(list_id.getString(String.valueOf(list_cart_count),"no_cart"));
+            }
+            for( int remove_cart = call_value-1 ;   remove_cart >= 0 ; remove_cart=remove_cart-1){
+                if(list_cart.get(remove_cart).toString()=="no_cart"){
+                    list_cart_num.remove(remove_cart);
+                    list_cart.remove(remove_cart);
+                    cartAdapter.notifyDataSetChanged();
+                }
+            }
+
+        } else {
                 Toast.makeText(this, "저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
             }
         } // onActivityResult of End.

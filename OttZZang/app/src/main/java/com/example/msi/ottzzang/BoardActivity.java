@@ -39,7 +39,8 @@ public class BoardActivity extends AppCompatActivity {
         save_btn_board.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
+
+                SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
                 SharedPreferences list_title = getSharedPreferences("list_name", MODE_PRIVATE);
                 SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
                 SharedPreferences list_content = getSharedPreferences("list_review", MODE_PRIVATE);
@@ -54,7 +55,7 @@ public class BoardActivity extends AppCompatActivity {
                 String writer = writer_name.getText().toString();
                 String esti = esti_txt.getText().toString();
                 String content = contents_txt.getText().toString();
-                call_value = list_i.getInt("list_number_i", 11);
+                call_value = list_i.getInt("list_number_count", 1);
 
                 edit_login_id_check.putString(String.valueOf(call_value), login_id);
                 edit_list_title.putString(String.valueOf(call_value), title);
