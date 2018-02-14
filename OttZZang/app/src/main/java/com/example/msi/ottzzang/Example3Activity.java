@@ -2,6 +2,7 @@ package com.example.msi.ottzzang;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -33,6 +36,9 @@ public class Example3Activity extends AppCompatActivity {
         private String mCurrentPhotoPath;
         int camera_code = 10;
         int gallery_code = 20;
+
+        int total_i;
+        String login_id;
 
     void requirePermission(){//권한 요청 메소드
         String [] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET};
@@ -50,6 +56,14 @@ public class Example3Activity extends AppCompatActivity {
 
 
 
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp= Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
 
 
     @Override
@@ -57,13 +71,55 @@ public class Example3Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example3);
 
+        Intent intent = getIntent();
+        login_id = intent.getStringExtra("login_id");
+
         requirePermission();
 
+        //아이디별 아우터 목록 저장하기 위한 Sharedpreferences
+        final SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
+        SharedPreferences outer_id_img = getSharedPreferences(login_id+"_outer_img", MODE_PRIVATE);
+        SharedPreferences outer_id_title = getSharedPreferences(login_id+"_outer_title", MODE_PRIVATE);
+        SharedPreferences outer_id_size = getSharedPreferences(login_id+"_outer_size", MODE_PRIVATE);
+        SharedPreferences outer_id_length = getSharedPreferences(login_id+"_outer_length", MODE_PRIVATE);
+        SharedPreferences outer_id_width = getSharedPreferences(login_id+"_outer_width", MODE_PRIVATE);
+        SharedPreferences outer_id_chest = getSharedPreferences(login_id+"_outer_chest", MODE_PRIVATE);
+        SharedPreferences outer_id_sleev = getSharedPreferences(login_id+"_outer_sleev", MODE_PRIVATE);
+        SharedPreferences outer_id_phone = getSharedPreferences(login_id+"_outer_phone", MODE_PRIVATE);
+        SharedPreferences outer_id_link = getSharedPreferences(login_id+"_outer_link", MODE_PRIVATE);
+        final SharedPreferences.Editor edit_total_list =total_list.edit();
+        final SharedPreferences.Editor edit_img = outer_id_img.edit();
+        final SharedPreferences.Editor edit_title = outer_id_title.edit();
+        final SharedPreferences.Editor edit_size = outer_id_size.edit();
+        final SharedPreferences.Editor edit_length = outer_id_length.edit();
+        final SharedPreferences.Editor edit_width = outer_id_width.edit();
+        final SharedPreferences.Editor edit_chest = outer_id_chest.edit();
+        final SharedPreferences.Editor edit_sleev = outer_id_sleev.edit();
+        final SharedPreferences.Editor edit_phone = outer_id_phone.edit();
+        final SharedPreferences.Editor edit_link = outer_id_link.edit();
+
+        //모든 쉐어드 초기화
+        edit_total_list.clear().commit();
+        edit_img .clear().commit();
+        edit_title.clear().commit();
+        edit_size.clear().commit();
+        edit_length.clear().commit();
+        edit_width.clear().commit();
+        edit_chest.clear().commit();
+        edit_sleev.clear().commit();
+        edit_phone.clear().commit();
+        edit_link.clear().commit();
+
+        total_i = total_list.getInt(login_id, 1);
 
         Button camera_btn = (Button) findViewById(R.id.camera_btn);
         final ImageView picture = (ImageView) findViewById(R.id.picture_upda);
         final EditText length00 = (EditText) findViewById(R.id.length00);
         final EditText item1 = (EditText) findViewById(R.id.item1);
+        final EditText length_height = (EditText) findViewById(R.id.length11);
+        final EditText length_width = (EditText) findViewById(R.id.length22);
+        final EditText length_chest = (EditText) findViewById(R.id.length33);
+        final EditText length_sleeve = (EditText) findViewById(R.id.length44);
         TableLayout table = (TableLayout) findViewById(R.id.table);
         final EditText phone_num = (EditText) findViewById(R.id.phone_num);
         final EditText link_text = (EditText) findViewById(R.id.link_text);
@@ -145,6 +201,13 @@ public class Example3Activity extends AppCompatActivity {
 
                 String item_name = item1.getText().toString();
                 String size = length00.getText().toString();
+                String length = length_height.getText().toString();
+                String width = length_width.getText().toString();
+                String chest = length_chest.getText().toString();
+                String sleev = length_sleeve.getText().toString();
+                String phone = phone_num.getText().toString();
+                String link = link_text.getText().toString();
+
                 if( item_name.equals("") ) {
                     Toast.makeText(Example3Activity.this, "제품명을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 } else if( size.equals("") ){
@@ -152,6 +215,23 @@ public class Example3Activity extends AppCompatActivity {
                 } else {
                     Bitmap bitmap = ((BitmapDrawable) picture.getDrawable()).getBitmap();
                     Bitmap resized = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
+
+                    //이미지를 쉐어드에 스트링으로 변환하여 저장
+                    String img = BitMapToString(resized);
+                    edit_img.putString(String.valueOf(total_i), img);
+                    edit_img.commit();
+
+                    //항목을 모두 쉐어드에 저장
+                    edit_title.putString(String.valueOf(total_i), item_name).commit();
+                    edit_size.putString(String.valueOf(total_i), size).commit();
+                    edit_length.putString(String.valueOf(total_i), length).commit();
+                    edit_width.putString(String.valueOf(total_i), width).commit();
+                    edit_chest.putString(String.valueOf(total_i), chest).commit();
+                    edit_sleev.putString(String.valueOf(total_i), sleev).commit();
+                    edit_phone.putString(String.valueOf(total_i), phone).commit();
+                    edit_link.putString(String.valueOf(total_i), link).commit();
+
+
                     Intent intent_save = new Intent();
                     String[] send = new String[]{item_name, size};
 

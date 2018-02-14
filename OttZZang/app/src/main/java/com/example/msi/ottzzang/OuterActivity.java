@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +32,25 @@ public class OuterActivity extends AppCompatActivity {
             int restart_i =0;
             int outerrequest_code = 1;
             int outermake_code = 5;
-    ArrayList<OuterItem> data = new ArrayList<>();
-    outerAdapter adapter = new outerAdapter(this, R.layout.listview_outer, data);
+
+            ArrayList<OuterItem> data = new ArrayList<>();
+            ArrayList<Integer> list_num = new ArrayList<>();
+            outerAdapter adapter = new outerAdapter(this, R.layout.listview_outer, data);
+
+            String login_id;
+            int total_i;
 
 
+    public Bitmap StringToBitMap(String encodedString){ // 스트링으로 받은 이미지를 비트맵으로 다시 변환
+        try{
+            byte [] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }catch(Exception e){
+            e.getMessage();
+            return null;
+        }
+    }
 
     @Override
     protected void onStart() {
@@ -54,33 +70,67 @@ public class OuterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outer);
 
+        Intent intent = getIntent();
+        login_id = intent.getStringExtra("login_id");
+
+
         TextView example = (TextView) findViewById(R.id.example);
         ImageButton plus_btn = (ImageButton) findViewById(R.id.plus_btn);
         ImageView picture = (ImageView) findViewById(R.id.picture_upda);
 
+        SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
+        SharedPreferences outer_id_img = getSharedPreferences(login_id+"_outer_img", MODE_PRIVATE);
+        SharedPreferences outer_id_title = getSharedPreferences(login_id+"_outer_title", MODE_PRIVATE);
+        SharedPreferences outer_id_size = getSharedPreferences(login_id+"_outer_size", MODE_PRIVATE);
+
+        total_i = total_list.getInt(login_id, 1);
+
+        for(int count = 1; count <= total_i; count=count+1) {
+            String img =outer_id_img.getString(String.valueOf(count), "");
+            Bitmap bitmap;
+            if(img == ""){
+               bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+            } else {
+                bitmap = StringToBitMap(img);
+            }
+            Bitmap resized = Bitmap.createScaledBitmap(bitmap,300, 400, true);
+            String title = outer_id_title.getString(String.valueOf(count), "no_title");
+            String size = outer_id_size.getString(String.valueOf(count),"no_size");
+
+            OuterItem outerItem = new OuterItem(resized, title, size);
+            list_num.add(count);
+            data.add(outerItem);
+        }
+        for(int remove_num= total_i-1; remove_num>=0; remove_num=remove_num-1){
+            if(data.get(remove_num).getOuter_info()=="no_title" || data.get(remove_num).getOuter_size()=="no_size"){
+                list_num.remove(remove_num);
+                data.remove(remove_num);
+                adapter.notifyDataSetChanged();
+            }
+        }
 
         final ListView listView = (ListView) findViewById(R.id.listview);
-        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.longpadding);
-        Bitmap resized1 = Bitmap.createScaledBitmap(bitmap1, 300, 400, true);
-        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.parka);
-        Bitmap resized2 = Bitmap.createScaledBitmap(bitmap2, 300, 400, true);
-        Bitmap bitmap3 = BitmapFactory.decodeResource(getResources(),R.drawable.coat1);
-        Bitmap resized3 = Bitmap.createScaledBitmap(bitmap3, 300, 400, true);
-        Bitmap bitmap4 = BitmapFactory.decodeResource(getResources(),R.drawable.coat2);
-        Bitmap resized4 = Bitmap.createScaledBitmap(bitmap4, 300, 400, true);
-        Bitmap bitmap5 = BitmapFactory.decodeResource(getResources(),R.drawable.padding);
-        Bitmap resized5 = Bitmap.createScaledBitmap(bitmap5, 300, 400, true);
-        OuterItem outerItem1 = new OuterItem(resized1, "롱패딩", "L");
-        OuterItem outerItem2 = new OuterItem(resized2, "개파카", "M");
-        OuterItem outerItem3 = new OuterItem(resized3, "코트1", "M");
-        OuterItem outerItem4 = new OuterItem(resized4, "코트2", "L");
-        OuterItem outerItem5 = new OuterItem(resized5, "패딩", "M");
-
-        data.add(outerItem1);
-        data.add(outerItem2);
-        data.add(outerItem3);
-        data.add(outerItem4);
-        data.add(outerItem5);
+//        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.longpadding);
+//        Bitmap resized1 = Bitmap.createScaledBitmap(bitmap1, 300, 400, true);
+//        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.parka);
+//        Bitmap resized2 = Bitmap.createScaledBitmap(bitmap2, 300, 400, true);
+//        Bitmap bitmap3 = BitmapFactory.decodeResource(getResources(),R.drawable.coat1);
+//        Bitmap resized3 = Bitmap.createScaledBitmap(bitmap3, 300, 400, true);
+//        Bitmap bitmap4 = BitmapFactory.decodeResource(getResources(),R.drawable.coat2);
+//        Bitmap resized4 = Bitmap.createScaledBitmap(bitmap4, 300, 400, true);
+//        Bitmap bitmap5 = BitmapFactory.decodeResource(getResources(),R.drawable.padding);
+//        Bitmap resized5 = Bitmap.createScaledBitmap(bitmap5, 300, 400, true);
+//        OuterItem outerItem1 = new OuterItem(resized1, "롱패딩", "L");
+//        OuterItem outerItem2 = new OuterItem(resized2, "개파카", "M");
+//        OuterItem outerItem3 = new OuterItem(resized3, "코트1", "M");
+//        OuterItem outerItem4 = new OuterItem(resized4, "코트2", "L");
+//        OuterItem outerItem5 = new OuterItem(resized5, "패딩", "M");
+//
+//        data.add(outerItem1);
+//        data.add(outerItem2);
+//        data.add(outerItem3);
+//        data.add(outerItem4);
+//        data.add(outerItem5);
 
         listView.setAdapter(adapter);
 
@@ -89,7 +139,10 @@ public class OuterActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 checked1 = listView.getCheckedItemPosition();
-                Intent intent = new Intent(getApplicationContext(), Example_modifyActivity.class);
+                int get_number = list_num.get(checked1);
+                Intent intent = new Intent(OuterActivity.this, Example_modifyActivity.class);
+                intent.putExtra("get_number", get_number);
+                intent.putExtra("login_id", login_id);
                 intent.putExtra("profile", data.get(position).getProfile());
                 intent.putExtra("outer_info", data.get(position).getOuter_info());
                 intent.putExtra("outer_size", data.get(position).getOuter_size());
@@ -101,6 +154,7 @@ public class OuterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent_plus = new Intent(v.getContext(), Example3Activity.class);
+                intent_plus.putExtra("login_id", login_id);
                 startActivityForResult(intent_plus, outermake_code);
             }
         });
@@ -144,7 +198,10 @@ public class OuterActivity extends AppCompatActivity {
             data.add(outerItem);
             adapter.notifyDataSetChanged();
             Toast.makeText(OuterActivity.this, "항목이 추가되었습니다.", Toast.LENGTH_SHORT).show();
-
+            SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
+            SharedPreferences.Editor edit_total_list = total_list.edit();
+            list_num.add(total_list.getInt(login_id,1));
+            edit_total_list.putInt(login_id, total_i+1).commit();
 
         } else {
             Toast.makeText(OuterActivity.this, "저장되지 않았습니다.", Toast.LENGTH_SHORT).show();

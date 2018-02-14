@@ -32,9 +32,9 @@ public class SubMainActivity extends AppCompatActivity {
     int check_cart = 0;
     int count_cart;
     String login_id;
-    int list_count=11;
+    int list_count = 1;
     int list_cart_count;
-    int cart_number =1;
+    int cart_number = 1;
     int list_cart_total; // 찜목록 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_cart_num 저장
 
     // board listview Item
@@ -188,7 +188,7 @@ public class SubMainActivity extends AppCompatActivity {
         list_cart_total = total_list_cart.getInt("list_cart_total", 1);
 
         //리스트뷰 찜 목록!!!!!!!!!!!!!!
-        SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+        SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
         for(list_cart_count=1; list_cart_count <= call_value; list_cart_count=list_cart_count+1){
             list_cart_num.add(list_cart_count);
             list_cart.add(list_id.getString(String.valueOf(list_cart_count),"no_cart"));
@@ -259,7 +259,7 @@ public class SubMainActivity extends AppCompatActivity {
                         SharedPreferences.Editor edit_cart_on = cart_on.edit();
                         edit_cart_on.putInt(login_id, 0);
                         edit_cart_on.commit();
-                        SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+                        SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
                         SharedPreferences.Editor edit_list_cart = list_id.edit();
                         edit_list_cart.remove(String.valueOf(i));
                         edit_list_cart.commit();
@@ -317,6 +317,7 @@ public class SubMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SubMainActivity.this, OuterActivity.class);
+                intent.putExtra("login_id", login_id);
                 startActivity(intent);
             }
         });
@@ -359,7 +360,7 @@ public class SubMainActivity extends AppCompatActivity {
             cartAdapter.notifyDataSetChanged();
         } else if(requestCode == 20 && resultCode == 23) {
             SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE);
-            SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+            SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
             SharedPreferences.Editor edit_list_cart = list_id.edit();
             int cart_array = data.getIntExtra("checked", 0);
             edit_list_cart.remove(String.valueOf(cart_array));

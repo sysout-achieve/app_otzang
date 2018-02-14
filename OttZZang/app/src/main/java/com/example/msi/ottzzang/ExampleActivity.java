@@ -81,11 +81,11 @@ public class ExampleActivity extends AppCompatActivity {
 
 
         Button camera_btn = (Button) findViewById(R.id.camera_btn);
-        ImageView picture = (ImageView) findViewById(R.id.picture1);
-        final EditText item1 = (EditText) findViewById(R.id.item_example);
+        ImageView picture = (ImageView) findViewById(R.id.picture1_ex);
+        final EditText item1 = (EditText) findViewById(R.id.item_example_ex);
         TableLayout table = (TableLayout) findViewById(R.id.table);
-        final EditText phone_num = (EditText) findViewById(R.id.phone_num);
-        final EditText link_text = (EditText) findViewById(R.id.link_text);
+        final EditText phone_num = (EditText) findViewById(R.id.phone_num_ex);
+        final EditText link_text = (EditText) findViewById(R.id.link_text_ex);
         Button call_btn = (Button) findViewById(R.id.call_btn);
         Button link_btn = (Button) findViewById(R.id.link_btn);
         Button save_btn = (Button) findViewById(R.id.save_btn_profile);
@@ -190,12 +190,12 @@ public class ExampleActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == camera_code){
-            ImageView picture = (ImageView) findViewById(R.id.picture1);
+            ImageView picture = (ImageView) findViewById(R.id.picture1_ex);
             picture.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
         }
         if(requestCode == gallery_code && resultCode == RESULT_OK){
             Uri uri = data.getData();
-            ImageView picture = (ImageView) findViewById(R.id.picture1);
+            ImageView picture = (ImageView) findViewById(R.id.picture1_ex);
             picture.setImageURI(uri);
         }
     }

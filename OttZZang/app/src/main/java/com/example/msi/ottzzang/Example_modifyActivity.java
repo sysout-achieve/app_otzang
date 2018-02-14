@@ -2,6 +2,7 @@ package com.example.msi.ottzzang;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,10 +30,14 @@ import java.util.Date;
 
 public class Example_modifyActivity extends AppCompatActivity {
 
-        private int img;
+
         private String mCurrentPhotoPath;
         int camera_code = 10;
         int gallery_code = 20;
+        int get_number;
+        String login_id;
+
+
 
     void requirePermission(){//권한 요청 메소드
         String [] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET};
@@ -58,12 +63,16 @@ public class Example_modifyActivity extends AppCompatActivity {
 
 
         Button camera_btn = (Button) findViewById(R.id.camera_btn);
-        final ImageView picture = (ImageView) findViewById(R.id.picture);
-        final EditText length00 = (EditText) findViewById(R.id.length00);
-        final EditText item1 = (EditText) findViewById(R.id.item1);
+        final ImageView picture = (ImageView) findViewById(R.id.picture_modi);
+        final EditText length00 = (EditText) findViewById(R.id.length00_modi);
+        final EditText item1 = (EditText) findViewById(R.id.item1_modi);
+        EditText length = (EditText) findViewById(R.id.length11_modi);
+        EditText width = (EditText) findViewById(R.id.width_modi);
+        EditText chest = (EditText) findViewById(R.id.chest_modi);
+        EditText sleev = (EditText) findViewById(R.id.sleev_modi);
         TableLayout table = (TableLayout) findViewById(R.id.table);
-        final EditText phone_num = (EditText) findViewById(R.id.phone_num);
-        final EditText link_text = (EditText) findViewById(R.id.link_text);
+        final EditText phone_num = (EditText) findViewById(R.id.phone_num_modi);
+        final EditText link_text = (EditText) findViewById(R.id.link_text_modi);
         Button call_btn = (Button) findViewById(R.id.call_btn);
         Button link_btn = (Button) findViewById(R.id.link_btn);
         Button save_btn = (Button) findViewById(R.id.save_btn_profile);
@@ -71,16 +80,34 @@ public class Example_modifyActivity extends AppCompatActivity {
         Button delete_btn = (Button) findViewById(R.id.delete_btn_modi);
 
         Intent intent = getIntent();
+        login_id = intent.getStringExtra("login_id");
         Bitmap bm = (Bitmap) intent.getParcelableExtra("profile") ;
         Bitmap resized = Bitmap.createScaledBitmap(bm, 250, 350, true);
         picture.setImageBitmap(resized);
         item1.setText(intent.getStringExtra("outer_info"));
         length00.setText(intent.getStringExtra("outer_size"));
-//            String[] list_item = intent.getStringArrayExtra("list_item");
-//            item1.setText(list_item[0]);
-//            length00.setText(list_item[1]);
+        get_number = intent.getIntExtra("get_number",1);
 
+        //아이디별 아우터 목록 저장하기 위한 Sharedpreferences
+        final SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
+        SharedPreferences outer_id_img = getSharedPreferences(login_id+"_outer_img", MODE_PRIVATE);
+        SharedPreferences outer_id_title = getSharedPreferences(login_id+"_outer_title", MODE_PRIVATE);
+        SharedPreferences outer_id_size = getSharedPreferences(login_id+"_outer_size", MODE_PRIVATE);
+        SharedPreferences outer_id_length = getSharedPreferences(login_id+"_outer_length", MODE_PRIVATE);
+        SharedPreferences outer_id_width = getSharedPreferences(login_id+"_outer_width", MODE_PRIVATE);
+        SharedPreferences outer_id_chest = getSharedPreferences(login_id+"_outer_chest", MODE_PRIVATE);
+        SharedPreferences outer_id_sleev = getSharedPreferences(login_id+"_outer_sleev", MODE_PRIVATE);
+        SharedPreferences outer_id_phone = getSharedPreferences(login_id+"_outer_phone", MODE_PRIVATE);
+        SharedPreferences outer_id_link = getSharedPreferences(login_id+"_outer_link", MODE_PRIVATE);
 
+        item1.setText(outer_id_title.getString(String.valueOf(get_number),""));
+        length00.setText(outer_id_size.getString(String.valueOf(get_number),""));
+        length.setText(outer_id_length.getString(String.valueOf(get_number),""));
+        width.setText(outer_id_width.getString(String.valueOf(get_number),""));
+        chest.setText(outer_id_chest.getString(String.valueOf(get_number),""));
+        sleev.setText(outer_id_sleev.getString(String.valueOf(get_number),""));
+        phone_num.setText(outer_id_phone.getString(String.valueOf(get_number),""));
+        link_text.setText(outer_id_link.getString(String.valueOf(get_number),""));
 
         image_btn.setOnClickListener(new View.OnClickListener() { //이미지 추가 버튼 클릭시
             @Override
@@ -197,12 +224,12 @@ public class Example_modifyActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == camera_code){
-            ImageView picture = (ImageView) findViewById(R.id.picture);
+            ImageView picture = (ImageView) findViewById(R.id.picture_modi);
             picture.setImageBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath));
         }
         if(requestCode == gallery_code && resultCode == RESULT_OK){
             Uri uri = data.getData();
-            ImageView picture = (ImageView) findViewById(R.id.picture);
+            ImageView picture = (ImageView) findViewById(R.id.picture_modi);
             picture.setImageURI(uri);
         }
     }

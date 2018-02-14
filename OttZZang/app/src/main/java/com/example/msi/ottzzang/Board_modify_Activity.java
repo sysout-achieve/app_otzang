@@ -116,7 +116,7 @@ public class Board_modify_Activity extends AppCompatActivity {
 
                     //찜목록 Sharedpreference 저장(각 ID에 따라 다르게 저장해야함)
                     String title = title_board_modi.getText().toString();
-                    SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+                    SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
 //                    SharedPreferences cart_num_memory = getSharedPreferences("cart_num_memory", MODE_PRIVATE);
 //                    SharedPreferences.Editor edit_cart_num_memory = cart_num_memory.edit();
                     SharedPreferences.Editor edit_list_cart = list_id.edit();
@@ -145,7 +145,7 @@ public class Board_modify_Activity extends AppCompatActivity {
                     edit_cart_on.commit();
 
                     //찜목록 Sharedpreference에서 제거(각 ID에 따라 다르게 저장해야함)
-                    SharedPreferences list_id = getSharedPreferences(login_id, MODE_PRIVATE);
+                    SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
                     SharedPreferences.Editor edit_list_cart = list_id.edit();
                     edit_list_cart.remove(String.valueOf(checked));
                     edit_list_cart.commit();
