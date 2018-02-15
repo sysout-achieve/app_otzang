@@ -99,16 +99,16 @@ public class Example3Activity extends AppCompatActivity {
         final SharedPreferences.Editor edit_link = outer_id_link.edit();
 
         //모든 쉐어드 초기화
-        edit_total_list.clear().commit();
-        edit_img .clear().commit();
-        edit_title.clear().commit();
-        edit_size.clear().commit();
-        edit_length.clear().commit();
-        edit_width.clear().commit();
-        edit_chest.clear().commit();
-        edit_sleev.clear().commit();
-        edit_phone.clear().commit();
-        edit_link.clear().commit();
+//        edit_total_list.clear().commit();
+//        edit_img .clear().commit();
+//        edit_title.clear().commit();
+//        edit_size.clear().commit();
+//        edit_length.clear().commit();
+//        edit_width.clear().commit();
+//        edit_chest.clear().commit();
+//        edit_sleev.clear().commit();
+//        edit_phone.clear().commit();
+//        edit_link.clear().commit();
 
         total_i = total_list.getInt(login_id, 1);
 
@@ -153,7 +153,6 @@ public class Example3Activity extends AppCompatActivity {
 
                 if(camera && write){
                     Intent intent_camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
                     try {
                         File photofile = createImageFile();
                         Uri photouri = FileProvider.getUriForFile(Example3Activity.this, "com.example.msi.ottzzang.fileprovider",photofile);

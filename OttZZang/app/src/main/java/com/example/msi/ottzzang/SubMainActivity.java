@@ -34,7 +34,6 @@ public class SubMainActivity extends AppCompatActivity {
     String login_id;
     int list_count = 1;
     int list_cart_count;
-    int cart_number = 1;
     int list_cart_total; // 찜목록 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_cart_num 저장
 
     // board listview Item
@@ -49,30 +48,6 @@ public class SubMainActivity extends AppCompatActivity {
     boardAdapter boardAdapter = new boardAdapter(this, list_num, list_board, list_writer);
     cartAdapter cartAdapter = new cartAdapter(this, list_cart);
 
-//    public void make_sp(){
-//        SharedPreferences list_i = getSharedPreferences("list_i", MODE_PRIVATE);
-//        SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
-//        SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
-//        SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
-//        SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
-//
-//        SharedPreferences.Editor edit_list_i = list_i.edit();
-//        SharedPreferences.Editor edit_list_name = list_name.edit();
-//        SharedPreferences.Editor edit_list_esti = list_esti.edit();
-//        SharedPreferences.Editor edit_list_review = list_review.edit();
-//        SharedPreferences.Editor edit_list_write = list_write.edit();
-//    }
-//
-//    public void remove_sp(){
-//
-//    }
-
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +139,6 @@ public class SubMainActivity extends AppCompatActivity {
         listview_cart.setAdapter(cartAdapter);
 
         final ListView listview = (ListView) findViewById(R.id.list_sub);
-//        final boardAdapter adapter = new boardAdapter(this, list_num, list_board, list_writer);
         listview.setAdapter(boardAdapter);
 
         call_value = list_i.getInt("list_number_count", 1);    //게시글 총 갯수 저장하는 변수
@@ -182,7 +156,7 @@ public class SubMainActivity extends AppCompatActivity {
                 list_writer.remove(remove_num);
                 boardAdapter.notifyDataSetChanged();
             }
-        }//일단 저장이 되는데 조금 더 보완을 생각해봅시다!!!!!!
+        }
 
 
         list_cart_total = total_list_cart.getInt("list_cart_total", 1);
@@ -211,36 +185,44 @@ public class SubMainActivity extends AppCompatActivity {
                 if(count > 0) {
                     checked = listview.getCheckedItemPosition();
                     if(checked > -1 && checked < count){
+                        SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
                         int list_delete_number = list_num.get(checked);
-                        list_num.remove(checked);
-                        list_board.remove(checked);
-                        list_writer.remove(checked);
+                        final String log_id = login_id_check.getString(String.valueOf(list_delete_number), "no_writer");
 
-                        SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
-                        SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
-                        SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
-                        SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
-                        SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+                        if(login_id.equals(log_id)) {
 
-                        SharedPreferences.Editor edit_list_i = list_i.edit();
-                        SharedPreferences.Editor edit_list_name = list_name.edit();
-                        SharedPreferences.Editor edit_list_esti = list_esti.edit();
-                        SharedPreferences.Editor edit_list_review = list_review.edit();
-                        SharedPreferences.Editor edit_list_write = list_write.edit();
+                            list_num.remove(checked);
+                            list_board.remove(checked);
+                            list_writer.remove(checked);
 
-                        edit_list_name.remove(String.valueOf(list_delete_number));
-                        edit_list_esti.remove(String.valueOf(list_delete_number));
-                        edit_list_review.remove(String.valueOf(list_delete_number));
-                        edit_list_write.remove(String.valueOf(list_delete_number));
+                            SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
+                            SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+                            SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
+                            SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
+                            SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
 
-                        edit_list_name.commit();
-                        edit_list_esti.commit();
-                        edit_list_review.commit();
-                        edit_list_write.commit();
+                            SharedPreferences.Editor edit_list_i = list_i.edit();
+                            SharedPreferences.Editor edit_list_name = list_name.edit();
+                            SharedPreferences.Editor edit_list_esti = list_esti.edit();
+                            SharedPreferences.Editor edit_list_review = list_review.edit();
+                            SharedPreferences.Editor edit_list_write = list_write.edit();
 
-                        listview.clearChoices();
-                        boardAdapter.notifyDataSetChanged();
-                        Toast.makeText(SubMainActivity.this, list_delete_number+"번 항목을 삭제하셨습니다.", Toast.LENGTH_SHORT).show();
+                            edit_list_name.remove(String.valueOf(list_delete_number));
+                            edit_list_esti.remove(String.valueOf(list_delete_number));
+                            edit_list_review.remove(String.valueOf(list_delete_number));
+                            edit_list_write.remove(String.valueOf(list_delete_number));
+
+                            edit_list_name.commit();
+                            edit_list_esti.commit();
+                            edit_list_review.commit();
+                            edit_list_write.commit();
+
+                            listview.clearChoices();
+                            boardAdapter.notifyDataSetChanged();
+                            Toast.makeText(SubMainActivity.this, list_delete_number + "번 항목을 삭제하셨습니다.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(SubMainActivity.this, "삭제 권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }

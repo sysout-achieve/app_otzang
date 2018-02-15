@@ -23,8 +23,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import okhttp3.OkHttpClient;
 
 public class OuterActivity extends AppCompatActivity {
             int checked1;
@@ -70,6 +75,15 @@ public class OuterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outer);
 
+          /*Stetho----------------------------*/
+        Stetho.initializeWithDefaults(this);
+
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
+
+
+        /* OuterActivity */
         Intent intent = getIntent();
         login_id = intent.getStringExtra("login_id");
 
@@ -82,10 +96,11 @@ public class OuterActivity extends AppCompatActivity {
         SharedPreferences outer_id_img = getSharedPreferences(login_id+"_outer_img", MODE_PRIVATE);
         SharedPreferences outer_id_title = getSharedPreferences(login_id+"_outer_title", MODE_PRIVATE);
         SharedPreferences outer_id_size = getSharedPreferences(login_id+"_outer_size", MODE_PRIVATE);
-
+        SharedPreferences.Editor edit_total_list = total_list.edit();
+        edit_total_list.putInt(login_id,1);
         total_i = total_list.getInt(login_id, 1);
 
-        for(int count = 1; count <= total_i; count=count+1) {
+        for(int count = 0; count <= total_i-1; count=count+1) {
             String img =outer_id_img.getString(String.valueOf(count), "");
             Bitmap bitmap;
             if(img == ""){
@@ -144,8 +159,8 @@ public class OuterActivity extends AppCompatActivity {
                 intent.putExtra("get_number", get_number);
                 intent.putExtra("login_id", login_id);
                 intent.putExtra("profile", data.get(position).getProfile());
-                intent.putExtra("outer_info", data.get(position).getOuter_info());
-                intent.putExtra("outer_size", data.get(position).getOuter_size());
+//                intent.putExtra("outer_info", data.get(position).getOuter_info());
+//                intent.putExtra("outer_size", data.get(position).getOuter_size());
                 startActivityForResult(intent, 33);
             }
         });
@@ -183,25 +198,31 @@ public class OuterActivity extends AppCompatActivity {
             Bitmap bm = (Bitmap)data_intent.getParcelableExtra("bm");
 
             OuterItem outerItem = new OuterItem(bm, send[0], send[1]);
+            list_num.set(checked1, checked1);
             data.set(checked1, outerItem);
             adapter.notifyDataSetChanged();
 
             Toast.makeText(OuterActivity.this, "항목이 수정되었습니다.", Toast.LENGTH_SHORT).show();
         } else if(requestCode == outercode_modi && resultCode ==55) {  //outer 삭제 버튼 클릭 시
+            list_num.remove(checked1);
             data.remove(checked1);
             adapter.notifyDataSetChanged();
+            Toast.makeText(OuterActivity.this, "삭제하셨습니다.",Toast.LENGTH_SHORT).show();
+
         } else if(requestCode == outermake_code && resultCode == 5){ //새로운 항목 추가 버튼 후 저장했을 때
             String[] send = data_intent.getStringArrayExtra("send2");
             Bitmap bm = (Bitmap) data_intent.getParcelableExtra("bm");
-
+            SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
+            total_i = total_list.getInt(login_id,1);
+            list_num.add(total_i);
             OuterItem outerItem = new OuterItem(bm, send[0], send[1]);
             data.add(outerItem);
             adapter.notifyDataSetChanged();
-            Toast.makeText(OuterActivity.this, "항목이 추가되었습니다.", Toast.LENGTH_SHORT).show();
-            SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
             SharedPreferences.Editor edit_total_list = total_list.edit();
-            list_num.add(total_list.getInt(login_id,1));
-            edit_total_list.putInt(login_id, total_i+1).commit();
+            edit_total_list.putInt(login_id, total_i+1);
+            edit_total_list.commit();
+
+            Toast.makeText(OuterActivity.this, "항목이 추가되었습니다.", Toast.LENGTH_SHORT).show();
 
         } else {
             Toast.makeText(OuterActivity.this, "저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
