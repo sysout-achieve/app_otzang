@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ public class Example3Activity extends AppCompatActivity {
         int total_i;
         String login_id;
 
+        int mDegree;
+
     void requirePermission(){//권한 요청 메소드
         String [] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET};
         ArrayList<String> listPermissionsNeeded = new ArrayList<>();
@@ -54,8 +57,6 @@ public class Example3Activity extends AppCompatActivity {
         }
     }
 
-
-
     public String BitMapToString(Bitmap bitmap){
         ByteArrayOutputStream baos=new  ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
@@ -64,7 +65,11 @@ public class Example3Activity extends AppCompatActivity {
         return temp;
     }
 
-
+    public Bitmap rotateImg(Bitmap bitmap, float degree){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,10 +132,20 @@ public class Example3Activity extends AppCompatActivity {
         Button link_btn = (Button) findViewById(R.id.link_btn);
         Button save_btn = (Button) findViewById(R.id.save_btn_profile);
         Button image_btn = (Button) findViewById(R.id.image_btn);
+        ImageView rot_btn_3 = (ImageView) findViewById(R.id.rot_btn_3);
 
 
             Toast.makeText(Example3Activity.this, "제품의 정보를 저장하여 인터넷 쇼핑에 활용해보세요.", Toast.LENGTH_SHORT).show();
 
+
+        rot_btn_3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = ((BitmapDrawable) picture.getDrawable()).getBitmap();
+                mDegree = mDegree+90;
+                picture.setImageBitmap(rotateImg(bitmap, mDegree));
+            }
+        });
 
         image_btn.setOnClickListener(new View.OnClickListener() { //이미지 추가 버튼 클릭시
             @Override

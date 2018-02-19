@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -37,7 +40,7 @@ public class Example_modifyActivity extends AppCompatActivity {
         int get_number;
         String login_id;
 
-
+        int mDegree;
 
     void requirePermission(){//권한 요청 메소드
         String [] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET};
@@ -53,6 +56,19 @@ public class Example_modifyActivity extends AppCompatActivity {
         }
     }
 
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp= Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    public Bitmap rotateImg(Bitmap bitmap, float degree){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +82,10 @@ public class Example_modifyActivity extends AppCompatActivity {
         final ImageView picture = (ImageView) findViewById(R.id.picture_modi);
         final EditText length00 = (EditText) findViewById(R.id.length00_modi);
         final EditText item1 = (EditText) findViewById(R.id.item1_modi);
-        EditText length = (EditText) findViewById(R.id.length11_modi);
-        EditText width = (EditText) findViewById(R.id.width_modi);
-        EditText chest = (EditText) findViewById(R.id.chest_modi);
-        EditText sleev = (EditText) findViewById(R.id.sleev_modi);
+        final EditText length = (EditText) findViewById(R.id.length11_modi);
+        final EditText width = (EditText) findViewById(R.id.width_modi);
+        final EditText chest = (EditText) findViewById(R.id.chest_modi);
+        final EditText sleev = (EditText) findViewById(R.id.sleev_modi);
         TableLayout table = (TableLayout) findViewById(R.id.table);
         final EditText phone_num = (EditText) findViewById(R.id.phone_num_modi);
         final EditText link_text = (EditText) findViewById(R.id.link_text_modi);
@@ -78,15 +94,17 @@ public class Example_modifyActivity extends AppCompatActivity {
         Button save_btn = (Button) findViewById(R.id.save_btn_profile);
         Button image_btn = (Button) findViewById(R.id.image_btn);
         Button delete_btn = (Button) findViewById(R.id.delete_btn_modi);
+        ImageView rot_btn_modi = (ImageView) findViewById(R.id.rot_btn_modi);
 
         Intent intent = getIntent();
         login_id = intent.getStringExtra("login_id");
-        Bitmap bm = (Bitmap) intent.getParcelableExtra("profile") ;
-        Bitmap resized = Bitmap.createScaledBitmap(bm, 250, 350, true);
-        picture.setImageBitmap(resized);
-        item1.setText(intent.getStringExtra("outer_info"));
-        length00.setText(intent.getStringExtra("outer_size"));
         get_number = intent.getIntExtra("get_number",1);
+        Bitmap bm = (Bitmap) intent.getParcelableExtra("profile") ;
+        final Bitmap resized = Bitmap.createScaledBitmap(bm, 250, 350, true);
+        picture.setImageBitmap(resized);
+//        item1.setText(intent.getStringExtra("outer_info"));
+//        length00.setText(intent.getStringExtra("outer_size"));
+
 
         //아이디별 아우터 목록 저장하기 위한 Sharedpreferences
         final SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);
@@ -99,6 +117,16 @@ public class Example_modifyActivity extends AppCompatActivity {
         SharedPreferences outer_id_sleev = getSharedPreferences(login_id+"_outer_sleev", MODE_PRIVATE);
         SharedPreferences outer_id_phone = getSharedPreferences(login_id+"_outer_phone", MODE_PRIVATE);
         SharedPreferences outer_id_link = getSharedPreferences(login_id+"_outer_link", MODE_PRIVATE);
+        final SharedPreferences.Editor edit_total_list =total_list.edit();
+        final SharedPreferences.Editor edit_img = outer_id_img.edit();
+        final SharedPreferences.Editor edit_title = outer_id_title.edit();
+        final SharedPreferences.Editor edit_size = outer_id_size.edit();
+        final SharedPreferences.Editor edit_length = outer_id_length.edit();
+        final SharedPreferences.Editor edit_width = outer_id_width.edit();
+        final SharedPreferences.Editor edit_chest = outer_id_chest.edit();
+        final SharedPreferences.Editor edit_sleev = outer_id_sleev.edit();
+        final SharedPreferences.Editor edit_phone = outer_id_phone.edit();
+        final SharedPreferences.Editor edit_link = outer_id_link.edit();
 
         item1.setText(outer_id_title.getString(String.valueOf(get_number),""));
         length00.setText(outer_id_size.getString(String.valueOf(get_number),""));
@@ -108,6 +136,15 @@ public class Example_modifyActivity extends AppCompatActivity {
         sleev.setText(outer_id_sleev.getString(String.valueOf(get_number),""));
         phone_num.setText(outer_id_phone.getString(String.valueOf(get_number),""));
         link_text.setText(outer_id_link.getString(String.valueOf(get_number),""));
+
+        rot_btn_modi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap bitmap = ((BitmapDrawable) picture.getDrawable()).getBitmap();
+                mDegree = mDegree+90;
+                picture.setImageBitmap(rotateImg(bitmap,mDegree));
+            }
+        });
 
         image_btn.setOnClickListener(new View.OnClickListener() { //이미지 추가 버튼 클릭시
             @Override
@@ -176,8 +213,22 @@ public class Example_modifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                String img = BitMapToString(resized);
+                edit_img.putString(String.valueOf(get_number), img);
+                edit_img.commit();
+
+                //항목을 모두 쉐어드에 저장
+                edit_title.putString(String.valueOf(get_number), item1.getText().toString()).commit();
+                edit_size.putString(String.valueOf(get_number), length00.getText().toString()).commit();
+                edit_length.putString(String.valueOf(get_number), length.getText().toString()).commit();
+                edit_width.putString(String.valueOf(get_number), width.getText().toString()).commit();
+                edit_chest.putString(String.valueOf(get_number), chest.getText().toString()).commit();
+                edit_sleev.putString(String.valueOf(get_number), sleev.getText().toString()).commit();
+                edit_phone.putString(String.valueOf(get_number), phone_num.getText().toString()).commit();
+                edit_link.putString(String.valueOf(get_number), link_text.getText().toString()).commit();
                 String item_name = item1.getText().toString();
                 String size = length00.getText().toString();
+
                 if( item_name.equals("") ) {
                     Toast.makeText(Example_modifyActivity.this, "제품명을 입력해주세요.", Toast.LENGTH_SHORT).show();
                 } else if( size.equals("") ){
@@ -198,6 +249,17 @@ public class Example_modifyActivity extends AppCompatActivity {
         delete_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                edit_img.remove(String.valueOf(get_number)).commit();
+                edit_title.remove(String.valueOf(get_number)).commit();
+                edit_size.remove(String.valueOf(get_number)).commit();
+                edit_length.remove(String.valueOf(get_number)).commit();
+                edit_width.remove(String.valueOf(get_number)).commit();
+                edit_chest.remove(String.valueOf(get_number)).commit();
+                edit_sleev.remove(String.valueOf(get_number)).commit();
+                edit_phone.remove(String.valueOf(get_number)).commit();
+                edit_link.remove(String.valueOf(get_number)).commit();
+
                 Intent intent = new Intent();
                 setResult(55, intent);
                 finish();
