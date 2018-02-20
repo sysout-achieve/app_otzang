@@ -100,7 +100,7 @@ public class Example_modifyActivity extends AppCompatActivity {
         login_id = intent.getStringExtra("login_id");
         get_number = intent.getIntExtra("get_number",1);
         Bitmap bm = (Bitmap) intent.getParcelableExtra("profile") ;
-        final Bitmap resized = Bitmap.createScaledBitmap(bm, 250, 350, true);
+        Bitmap resized = Bitmap.createScaledBitmap(bm, 250, 350, true);
         picture.setImageBitmap(resized);
 //        item1.setText(intent.getStringExtra("outer_info"));
 //        length00.setText(intent.getStringExtra("outer_size"));
@@ -213,19 +213,6 @@ public class Example_modifyActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String img = BitMapToString(resized);
-                edit_img.putString(String.valueOf(get_number), img);
-                edit_img.commit();
-
-                //항목을 모두 쉐어드에 저장
-                edit_title.putString(String.valueOf(get_number), item1.getText().toString()).commit();
-                edit_size.putString(String.valueOf(get_number), length00.getText().toString()).commit();
-                edit_length.putString(String.valueOf(get_number), length.getText().toString()).commit();
-                edit_width.putString(String.valueOf(get_number), width.getText().toString()).commit();
-                edit_chest.putString(String.valueOf(get_number), chest.getText().toString()).commit();
-                edit_sleev.putString(String.valueOf(get_number), sleev.getText().toString()).commit();
-                edit_phone.putString(String.valueOf(get_number), phone_num.getText().toString()).commit();
-                edit_link.putString(String.valueOf(get_number), link_text.getText().toString()).commit();
                 String item_name = item1.getText().toString();
                 String size = length00.getText().toString();
 
@@ -236,6 +223,21 @@ public class Example_modifyActivity extends AppCompatActivity {
                 } else {
                     Bitmap bitmap = ((BitmapDrawable) picture.getDrawable()).getBitmap();
                     Bitmap resized = Bitmap.createScaledBitmap(bitmap, 300, 400, true);
+                    String img = BitMapToString(resized);
+                    edit_img.putString(String.valueOf(get_number), img);
+                    edit_img.commit();
+
+                    //항목을 모두 쉐어드에 저장
+                    edit_title.putString(String.valueOf(get_number), item1.getText().toString()).commit();
+                    edit_size.putString(String.valueOf(get_number), length00.getText().toString()).commit();
+                    edit_length.putString(String.valueOf(get_number), length.getText().toString()).commit();
+                    edit_width.putString(String.valueOf(get_number), width.getText().toString()).commit();
+                    edit_chest.putString(String.valueOf(get_number), chest.getText().toString()).commit();
+                    edit_sleev.putString(String.valueOf(get_number), sleev.getText().toString()).commit();
+                    edit_phone.putString(String.valueOf(get_number), phone_num.getText().toString()).commit();
+                    edit_link.putString(String.valueOf(get_number), link_text.getText().toString()).commit();
+
+
                     Intent intent_save = new Intent();
                     String[] send = new String[]{item_name, size};
                     intent_save.putExtra("send1", send);

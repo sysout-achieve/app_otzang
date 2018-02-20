@@ -198,7 +198,7 @@ public class OuterActivity extends AppCompatActivity {
             Bitmap bm = (Bitmap)data_intent.getParcelableExtra("bm");
 
             OuterItem outerItem = new OuterItem(bm, send[0], send[1]);
-            list_num.set(checked1, checked1);
+
             data.set(checked1, outerItem);
             adapter.notifyDataSetChanged();
 
