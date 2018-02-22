@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,10 +33,13 @@ public class SubMainActivity extends AppCompatActivity {
     int check_cart = 0;
     int count_cart;
     String login_id;
+
+    String log_id;
+
     int list_count;
     int list_cart_count;
     int list_cart_total; // 찜목록 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_cart_num 저장
-
+    int check_list;
     // board listview Item
     ArrayList<Integer> list_num = new ArrayList<>();
     ArrayList<String> list_board = new ArrayList<>();
@@ -190,6 +194,31 @@ public class SubMainActivity extends AppCompatActivity {
         }
 
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                check_list = listview.getCheckedItemPosition();
+                int get_number = list_num.get(check_list);
+                SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
+                log_id = login_id_check.getString(String.valueOf(get_number), "no_writer");
+
+
+                if(log_id.equals(login_id)){
+                    Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
+                    intent.putExtra("get_number", get_number);
+                    intent.putExtra("login_id", login_id);
+                    startActivityForResult(intent, 20);
+                } else{
+                    Intent intent = new Intent(SubMainActivity.this, Board_cart_Activity.class);
+                    intent.putExtra("get_number", get_number);
+                    intent.putExtra("login_id", login_id);
+                    startActivityForResult(intent, 20);
+
+                }
+
+            }
+        });
+
         delete_board_btn.setOnClickListener(new View.OnClickListener() { //게시판 목록 삭제
             @Override
             public void onClick(View v) {
@@ -201,7 +230,7 @@ public class SubMainActivity extends AppCompatActivity {
                     if(checked > -1 && checked < count){
                         SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
                         int list_delete_number = list_num.get(checked);
-                        final String log_id = login_id_check.getString(String.valueOf(list_delete_number), "no_writer");
+                        log_id = login_id_check.getString(String.valueOf(list_delete_number), "no_writer");
 
                         if(login_id.equals(log_id)) {
 

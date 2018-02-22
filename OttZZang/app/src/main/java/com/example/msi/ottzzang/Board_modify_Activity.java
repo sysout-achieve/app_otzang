@@ -25,10 +25,6 @@ public class Board_modify_Activity extends AppCompatActivity {
         Button save_btn_modi = (Button) findViewById(R.id.save_btn_profile);
         ImageView cart_btn = (ImageView) findViewById(R.id.cart_btn);
 
-
-
-//        SharedPreferences Checked_board = getSharedPreferences("Checked_board", MODE_PRIVATE);
-//        SharedPreferences.Editor edit_check_board = Checked_board.edit();
         SharedPreferences list_title = getSharedPreferences("list_name", MODE_PRIVATE);
         SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
         SharedPreferences list_content = getSharedPreferences("list_review", MODE_PRIVATE);
@@ -36,10 +32,9 @@ public class Board_modify_Activity extends AppCompatActivity {
         SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
 
         Intent intent = getIntent();
-//        String[] renew = intent.getStringArrayExtra("renew");
 
         final String login_id = intent.getStringExtra("login_id");
-        final int checked = intent.getIntExtra("checked",1);
+        final int checked = intent.getIntExtra("get_number",1);
         title_board_modi.setText(list_title.getString(String.valueOf(checked),""));
         esti_txt_modi.setText(list_esti.getString(String.valueOf(checked),""));
         contents_txt_modi.setText(list_content.getString(String.valueOf(checked),""));
@@ -56,9 +51,6 @@ public class Board_modify_Activity extends AppCompatActivity {
         } else if (cartnum == 1){
             cart_btn.setImageResource(R.drawable.like_clicked);
         }
-//        title_board_modi.setText(renew[0]);
-//        writer_name_modi.setText(renew[1]);
-
 
 
         save_btn_modi.setOnClickListener(new View.OnClickListener() {
@@ -117,15 +109,11 @@ public class Board_modify_Activity extends AppCompatActivity {
                     //찜목록 Sharedpreference 저장(각 ID에 따라 다르게 저장해야함)
                     String title = title_board_modi.getText().toString();
                     SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
-//                    SharedPreferences cart_num_memory = getSharedPreferences("cart_num_memory", MODE_PRIVATE);
-//                    SharedPreferences.Editor edit_cart_num_memory = cart_num_memory.edit();
+
                     SharedPreferences.Editor edit_list_cart = list_id.edit();
 
-//                    list_cart_total = list_id.getInt(login_id,1);
                     edit_list_cart.putString(String.valueOf(checked), title);
-//                    edit_cart_num_memory.putInt(String.valueOf(checked),checked);
-//                    list_cart_total=list_cart_total+1;
-//                    edit_list_cart.putInt(login_id, list_cart_total);
+
                     edit_list_cart.commit();
 
                     //찜목록에 저장하는 intent
@@ -154,7 +142,6 @@ public class Board_modify_Activity extends AppCompatActivity {
                     intent.putExtra("checked",checked);
                     setResult(23, intent);
                     Toast.makeText(Board_modify_Activity.this, "찜 목록에서 제거했습니다.", Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
