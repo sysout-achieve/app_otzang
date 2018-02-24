@@ -187,7 +187,7 @@ public class SubMainActivity extends AppCompatActivity {
             int renum = list_renum.getInt(String.valueOf(list_count), 0);
             int heartnum = list_heartnum.getInt(String.valueOf(list_count),0);
             list_num.add(list_count);
-            BoardItem boardItem = new BoardItem(resized,name, write, kind, review, renum, heartnum );
+            BoardItem boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
             b_item.add(boardItem);
 //            list_board.add(list_name.getString(String.valueOf(list_count),"no_content"));
 //            list_writer.add(list_write.getString(String.valueOf(list_count),"no_writer"));
@@ -223,25 +223,50 @@ public class SubMainActivity extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
                 check_list = listview.getCheckedItemPosition();
                 int get_number = list_num.get(check_list);
                 SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
                 log_id = login_id_check.getString(String.valueOf(get_number), "no_writer");
-
-
-                if(log_id.equals(login_id)){
-                    Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
-                    intent.putExtra("get_number", get_number);
-                    intent.putExtra("login_id", login_id);
-                    startActivityForResult(intent, 20);
-                } else{
-                    Intent intent = new Intent(SubMainActivity.this, Board_cart_Activity.class);
-                    intent.putExtra("get_number", get_number);
-                    intent.putExtra("login_id", login_id);
-                    startActivityForResult(intent, 20);
-
+                SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
+                SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
+                SharedPreferences img3 = getSharedPreferences("img3", MODE_PRIVATE);
+                String str_img1 =img1.getString(String.valueOf(get_number), "");
+                Bitmap bitmap;
+                if(str_img1 == ""){
+                    bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+                } else {
+                    bitmap = StringToBitMap(str_img1);
                 }
 
+                String str_img2 =img2.getString(String.valueOf(get_number), "");
+                Bitmap bitmap1;
+                if(str_img2 == ""){
+                    bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+                } else {
+                    bitmap1 = StringToBitMap(str_img2);
+                }
+                String str_img3 =img3.getString(String.valueOf(get_number), "");
+                Bitmap bitmap2;
+                if(str_img3 == ""){
+                    bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+                } else {
+                    bitmap2 = StringToBitMap(str_img3);
+                }
+
+
+//                if(log_id.equals(login_id)){
+//                    Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
+//                    intent.putExtra("get_number", get_number);
+//                    intent.putExtra("login_id", login_id);
+//                    startActivityForResult(intent, 20);
+//                } else{
+//                    Intent intent = new Intent(SubMainActivity.this, Board_cart_Activity.class);
+//                    intent.putExtra("get_number", get_number);
+//                    intent.putExtra("login_id", login_id);
+//                    startActivityForResult(intent, 20);
+//                }
             }
         });
 
@@ -296,6 +321,8 @@ public class SubMainActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
+
+
 
         read_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -423,7 +450,7 @@ public class SubMainActivity extends AppCompatActivity {
                 int renum = list_renum.getInt(String.valueOf(list_count), 0);
                 int heartnum = list_heartnum.getInt(String.valueOf(list_count),0);
                 list_num.add(list_count);
-                BoardItem boardItem = new BoardItem(resized,name, write, kind, review, renum, heartnum );
+                BoardItem boardItem = new BoardItem(resized,name, write, kind, renum, heartnum, null,null,null );
                 b_item.add(boardItem);
             }
 
@@ -572,23 +599,23 @@ public class SubMainActivity extends AppCompatActivity {
             ImageView bod_img = (ImageView) convertView.findViewById(R.id.bod_img);
             TextView text_name = (TextView) convertView.findViewById(R.id.text_name);
             TextView kind_txt =(TextView) convertView.findViewById(R.id.kind_txt);
-            TextView contents_txt = (TextView) convertView.findViewById(R.id.contents_list);
             TextView text_write = (TextView) convertView.findViewById(R.id.text_writer);
             TextView re_num = (TextView) convertView.findViewById(R.id.re_num);
             TextView heart_num = (TextView) convertView.findViewById(R.id.heart_num);
+            ImageView img1 = (ImageView) convertView.findViewById(R.id.bimg_1);
+            ImageView img2 = (ImageView) convertView.findViewById(R.id.bimg_2);
+            ImageView img3 = (ImageView) convertView.findViewById(R.id.bimg_3);
 
             bod_img.setImageBitmap(boardItem.getBod_img());
             text_num.setText(list_num.get(position).toString());
             text_name.setText(boardItem.getBod_title());
             text_write.setText(boardItem.getBod_writer());
             kind_txt.setText(boardItem.getBod_cate());
-            contents_txt.setText(boardItem.getBod_contents());
 
             heart_num.setText(boardItem.getHeart_num().toString());
             re_num.setText(boardItem.getRe_num().toString());
 
-
-        return convertView;
+            return convertView;
         }
     }
 
