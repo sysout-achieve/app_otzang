@@ -43,6 +43,10 @@ public class BoardItem {
     public Bitmap getImg1(){
         return img1;
     }
+//    public Bitmap setImg1(Bitmap bitmap){
+//        img1 = bitmap;
+//        return img1;
+//    }
     public Bitmap getImg2(){
         return img2;
     }
@@ -50,7 +54,7 @@ public class BoardItem {
         return img3;
     }
 
-    public BoardItem(Bitmap bod_img, String bod_title, String bod_writer,String bod_cate,  Integer re_num, Integer heart_num, Bitmap img1, Bitmap img2, Bitmap img3){
+    public BoardItem(Bitmap bod_img, String bod_title, String bod_writer,String bod_cate, Integer re_num, Integer heart_num, Bitmap img1, Bitmap img2, Bitmap img3){
         this.bod_img = bod_img;
         this.bod_title = bod_title;
         this.bod_writer = bod_writer;
@@ -60,6 +64,5 @@ public class BoardItem {
         this.img1 = img1;
         this.img2 = img2;
         this.img3 = img3;
-
     }
 }

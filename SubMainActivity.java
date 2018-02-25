@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -35,6 +37,8 @@ public class SubMainActivity extends AppCompatActivity {
     int write_code = 101;
     int check_cart = 0;
     int count_cart;
+    int ad = 0;
+    int main_ad_num = 0;
     String login_id;
 
     String log_id;
@@ -105,14 +109,87 @@ public class SubMainActivity extends AppCompatActivity {
         spec3.setContent(R.id.장바구니);
         tabs.addTab(spec3);
 
+
+        //옷장 Tab
         ImageView outer = (ImageView) findViewById(R.id.outer);
         ImageView top = (ImageView) findViewById(R.id.top);
         ImageView bottom = (ImageView) findViewById(R.id.bottom);
         final ImageView profile_btn = (ImageView) findViewById(R.id.profile_btn);
-        final ImageView write_btn = (ImageView) findViewById(R.id.write_btn);
-        ImageView delete_btn = (ImageView) findViewById(R.id.delete_btn);
+        final ImageView main_ad = (ImageView) findViewById(R.id.main_ad);
+        main_ad.setImageResource(R.drawable.main_ad1);
+        final Handler handler_admain = new Handler();
+        Thread thread_mainad = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
 
-        ImageView read_btn = (ImageView) findViewById(R.id.read_btn);
+                    }
+                    handler_admain.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (main_ad_num == 0) {
+                                main_ad.setImageResource(R.drawable.main_ad1);
+                                main_ad_num = 1;
+                            } else if (main_ad_num == 1) {
+                                main_ad.setImageResource(R.drawable.main_ad2);
+                                main_ad_num = 2;
+                            } else if (main_ad_num == 2) {
+                                main_ad.setImageResource(R.drawable.main_ad3);
+                                main_ad_num = 3;
+                            } else {
+                                main_ad.setImageResource(R.drawable.main_ad4);
+                                main_ad_num = 0;
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        thread_mainad.start();
+
+        //board Tab
+        final ImageView write_btn = (ImageView) findViewById(R.id.write_btn);
+        //cart Tab
+        final ImageView ad_img = (ImageView) findViewById(R.id.ad_imgv);
+        ad_img.setImageResource(R.drawable.ad_img1);
+
+        final Handler handler_ad = new Handler();
+        Thread thread_ad = new Thread(new Runnable() { //찜목록 오른쪽 아래에 광고 배너 sub_thread
+            @Override
+            public void run() {
+               while(true) {
+                   try {
+                       Thread.sleep(2000);
+                   } catch (Exception e) {
+
+                   }
+                   handler_ad.post(new Runnable() {
+                       @Override
+                       public void run() {
+                           if (ad == 0) {
+                               ad_img.setImageResource(R.drawable.ad_img2);
+                               ad = 1;
+                           } else if(ad ==1){
+                               ad_img.setImageResource(R.drawable.ad_img1);
+                               ad = 2;
+                           } else {
+                               ad_img.setImageResource(R.drawable.ad_img3);
+                               ad = 0;
+                           }
+                       }
+                   });
+               }
+            }
+        });
+        thread_ad.start();
+
+
+
+//        ImageView delete_btn = (ImageView) findViewById(R.id.delete_btn);
+//        ImageView read_btn = (ImageView) findViewById(R.id.read_btn);
         final SharedPreferences board = getSharedPreferences("board", MODE_PRIVATE);
 //        SharedPreferences list_count_save = getSharedPreferences("login_count", MODE_PRIVATE);
 //        SharedPreferences.Editor edit_list_count = list_count_save.edit();
@@ -224,7 +301,6 @@ public class SubMainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
                 check_list = listview.getCheckedItemPosition();
                 int get_number = list_num.get(check_list);
                 SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
@@ -234,27 +310,31 @@ public class SubMainActivity extends AppCompatActivity {
                 SharedPreferences img3 = getSharedPreferences("img3", MODE_PRIVATE);
                 String str_img1 =img1.getString(String.valueOf(get_number), "");
                 Bitmap bitmap;
-                if(str_img1 == ""){
+//                if(str_img1 == ""){
                     bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
-                } else {
-                    bitmap = StringToBitMap(str_img1);
-                }
+//                } else {
+//                    bitmap = StringToBitMap(str_img1);
+//                }
+                Bitmap resize = Bitmap.createScaledBitmap(bitmap,10, 15, true);
 
-                String str_img2 =img2.getString(String.valueOf(get_number), "");
-                Bitmap bitmap1;
-                if(str_img2 == ""){
-                    bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
-                } else {
-                    bitmap1 = StringToBitMap(str_img2);
-                }
-                String str_img3 =img3.getString(String.valueOf(get_number), "");
-                Bitmap bitmap2;
-                if(str_img3 == ""){
-                    bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
-                } else {
-                    bitmap2 = StringToBitMap(str_img3);
-                }
+//                String str_img2 =img2.getString(String.valueOf(get_number), "");
+//                Bitmap bitmap1;
+//                if(str_img2 == ""){
+//                    bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+//                } else {
+//                    bitmap1 = StringToBitMap(str_img2);
+//                }
+//                String str_img3 =img3.getString(String.valueOf(get_number), "");
+//                Bitmap bitmap2;
+//                if(str_img3 == ""){
+//                    bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+//                } else {
+//                    bitmap2 = StringToBitMap(str_img3);
+//                }
 
+//                    BoardItem boardItem = b_item.get(check_list);
+//                    boardItem.setImg1(bitmap);
+//                    boardAdapter.notifyDataSetChanged();
 
 //                if(log_id.equals(login_id)){
 //                    Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
@@ -267,6 +347,14 @@ public class SubMainActivity extends AppCompatActivity {
 //                    intent.putExtra("login_id", login_id);
 //                    startActivityForResult(intent, 20);
 //                }
+            }
+        });
+
+        main_ad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_link = new Intent(Intent.ACTION_VIEW, Uri.parse("http://store.musinsa.com/app/"));
+                startActivity(intent_link);
             }
         });
 
@@ -324,48 +412,48 @@ public class SubMainActivity extends AppCompatActivity {
 
 
 
-        read_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                count_cart = cartAdapter.getCount();
-                check_cart = listview_cart.getCheckedItemPosition();
-                if(check_cart > -1 && check_cart < count_cart){
-                    int i = list_cart_num.get(check_cart);
-                    Intent intent = new Intent(SubMainActivity.this, Board_read_Activity.class);
-                    intent.putExtra("checked", i);
-                    intent.putExtra("login_id", login_id);
-                    startActivity(intent);
-                }
-            }
-        });
-
-        delete_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { //찜목록 탭에서 삭제 버튼 클릭 시
-                count_cart = cartAdapter.getCount();
-                if(count_cart >0){
-                    check_cart = listview_cart.getCheckedItemPosition();
-                    if(check_cart > -1 && check_cart < count_cart){
-                        //찜목록에서 바로 찜 삭제하면 하트 지워짐
-                        int i = list_cart_num.get(check_cart);
-                        SharedPreferences cart_on = getSharedPreferences(String.valueOf(i),MODE_PRIVATE);
-                        SharedPreferences.Editor edit_cart_on = cart_on.edit();
-                        edit_cart_on.putInt(login_id, 0);
-                        edit_cart_on.commit();
-                        SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
-                        SharedPreferences.Editor edit_list_cart = list_id.edit();
-                        edit_list_cart.remove(String.valueOf(i));
-                        edit_list_cart.commit();
-
-                        list_cart_num.remove(check_cart);
-                        list_cart.remove(check_cart);
-
-                        listview_cart.clearChoices();
-                        cartAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
-        });
+//        read_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { //장바구니에서 읽기 버튼 클릭 이벤트
+//                count_cart = cartAdapter.getCount();
+//                check_cart = listview_cart.getCheckedItemPosition();
+//                if(check_cart > -1 && check_cart < count_cart){
+//                    int i = list_cart_num.get(check_cart);
+//                    Intent intent = new Intent(SubMainActivity.this, Board_read_Activity.class);
+//                    intent.putExtra("checked", i);
+//                    intent.putExtra("login_id", login_id);
+//                    startActivity(intent);
+//                }
+//            }
+//        });
+//
+//        delete_btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { //찜목록 탭에서 삭제 버튼 클릭 시
+//                count_cart = cartAdapter.getCount();
+//                if(count_cart >0){
+//                    check_cart = listview_cart.getCheckedItemPosition();
+//                    if(check_cart > -1 && check_cart < count_cart){
+//                        //찜목록에서 바로 찜 삭제하면 하트 지워짐
+//                        int i = list_cart_num.get(check_cart);
+//                        SharedPreferences cart_on = getSharedPreferences(String.valueOf(i),MODE_PRIVATE);
+//                        SharedPreferences.Editor edit_cart_on = cart_on.edit();
+//                        edit_cart_on.putInt(login_id, 0);
+//                        edit_cart_on.commit();
+//                        SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
+//                        SharedPreferences.Editor edit_list_cart = list_id.edit();
+//                        edit_list_cart.remove(String.valueOf(i));
+//                        edit_list_cart.commit();
+//
+//                        list_cart_num.remove(check_cart);
+//                        list_cart.remove(check_cart);
+//
+//                        listview_cart.clearChoices();
+//                        cartAdapter.notifyDataSetChanged();
+//                    }
+//                }
+//            }
+//        });
 
 //        modify_btn.setOnClickListener(new View.OnClickListener() { // 읽기 버튼 클릭 이벤트 확정시 주석도 제거
 //            @Override
@@ -386,6 +474,7 @@ public class SubMainActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
+
 
         write_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -432,6 +521,7 @@ public class SubMainActivity extends AppCompatActivity {
             call_value = list_i.getInt("list_number_count",1);
 
             list_num.clear();
+            b_item.clear();
 //            list_board.clear();
 //            list_writer.clear();
             for(list_count=call_value-1; list_count >= 0; list_count=list_count-1){
@@ -607,6 +697,11 @@ public class SubMainActivity extends AppCompatActivity {
             ImageView img3 = (ImageView) convertView.findViewById(R.id.bimg_3);
 
             bod_img.setImageBitmap(boardItem.getBod_img());
+//
+//            if(boardItem.getImg1()!=null){
+//                img1.setImageBitmap(boardItem.getImg1());
+//            }
+
             text_num.setText(list_num.get(position).toString());
             text_name.setText(boardItem.getBod_title());
             text_write.setText(boardItem.getBod_writer());

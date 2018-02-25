@@ -46,6 +46,7 @@ ImageView bimg_3;
         String temp= Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 20 && resultCode == RESULT_OK){
@@ -96,21 +97,33 @@ ImageView bimg_3;
         writer_name.setText(writer);
 
 
-        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 spin_cate = spinner.getItemAtPosition(position).toString();
                 Toast.makeText(BoardActivity.this, spin_cate+"을 선택하셨습니다.", Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
 
-        spinner1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 spin_es = spinner1.getItemAtPosition(position).toString();
                 Toast.makeText(BoardActivity.this, spin_es+"를 선택하셨습니다.", Toast.LENGTH_SHORT).show();
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+
+
 
         imgplus1.setOnClickListener(new View.OnClickListener() { //이미지 추가 버튼 클릭시
             @Override
@@ -171,7 +184,7 @@ ImageView bimg_3;
 
                 SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
                 SharedPreferences list_title = getSharedPreferences("list_name", MODE_PRIVATE);
-                SharedPreferences list_cate = getSharedPreferences("list_category", MODE_PRIVATE);
+                SharedPreferences list_cate = getSharedPreferences("list_kind", MODE_PRIVATE);
                 SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
                 SharedPreferences list_content = getSharedPreferences("list_review", MODE_PRIVATE);
                 SharedPreferences list_writer = getSharedPreferences("list_write", MODE_PRIVATE);
@@ -194,9 +207,9 @@ ImageView bimg_3;
                 String content = contents_txt.getText().toString();
                 call_value = list_i.getInt("list_number_count", 1);
 
-                edit_img1.putString(String.valueOf(call_value), str_img1);
-                edit_img2.putString(String.valueOf(call_value), str_img2);
-                edit_img3.putString(String.valueOf(call_value), str_img3);
+//                edit_img1.putString(String.valueOf(call_value), str_img1);
+//                edit_img2.putString(String.valueOf(call_value), str_img2);
+//                edit_img3.putString(String.valueOf(call_value), str_img3);
 
                 edit_login_id_check.putString(String.valueOf(call_value), login_id).commit();
                 edit_list_title.putString(String.valueOf(call_value), title).commit();
