@@ -36,7 +36,7 @@ public class SubMainActivity extends AppCompatActivity {
     int checked;
     int call_value; // 게시판 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_num저장
     int write_code = 101;
-    int check_cart = 0;
+    int check_cart;
     int count_cart;
     int ad = 0;
     int main_ad_num = 0;
@@ -211,12 +211,20 @@ public class SubMainActivity extends AppCompatActivity {
         SharedPreferences list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
         SharedPreferences list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
         SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
+        SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
+        SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
+        SharedPreferences img3 = getSharedPreferences("img3", MODE_PRIVATE);
+        SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+        SharedPreferences.Editor edit_cart_like = cart_like.edit();
 
 
 
         SharedPreferences cart_on = getSharedPreferences("cart_on",MODE_PRIVATE);
         SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE); //찜목록 저장 갯수와 번호순으로 저장
 
+        SharedPreferences.Editor edit_img1 = img1.edit();
+        SharedPreferences.Editor edit_img2 = img2.edit();
+        SharedPreferences.Editor edit_img3 = img3.edit();
         SharedPreferences.Editor edit_total_cart = total_list_cart.edit();
         SharedPreferences.Editor edit_cart_on = cart_on.edit();
         SharedPreferences.Editor edit_list_i = list_i.edit();
@@ -229,6 +237,10 @@ public class SubMainActivity extends AppCompatActivity {
 
 
         //SharedPreferences 초기화
+//        edit_cart_like.clear().commit();
+//        edit_img1.clear().commit();
+//        edit_img2.clear().commit();
+//        edit_img3.clear().commit();
 //        edit_list_img.clear().commit();
 //        edit_list_kind.clear().commit();
 //        edit_total_cart.clear();
@@ -258,7 +270,7 @@ public class SubMainActivity extends AppCompatActivity {
         call_value = list_i.getInt("list_number_count", 1);    //게시글 총 갯수 저장하는 변수
 
         for(list_count=call_value-1; list_count >= 0; list_count=list_count-1){
-            String img = list_img.getString(String.valueOf(list_count),"");
+            String img = img1.getString(String.valueOf(list_count),"");
             Bitmap bitmap;
             if(img == ""){
                 bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
@@ -271,7 +283,7 @@ public class SubMainActivity extends AppCompatActivity {
             String write = list_write.getString(String.valueOf(list_count), "no_writer");
             String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
             int renum = list_renum.getInt(String.valueOf(list_count), 0);
-            int heartnum = list_heartnum.getInt(String.valueOf(list_count),0);
+            int heartnum = cart_like.getInt(String.valueOf(list_count),0);
             list_num.add(list_count);
             boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
             b_item.add(boardItem);
@@ -358,6 +370,17 @@ public class SubMainActivity extends AppCompatActivity {
                     startActivityForResult(intent, 20);
                 }
             }
+        });
+
+        listview_cart.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                check_cart= listview_cart.getCheckedItemPosition();
+                int cartnum = list_cart_num.get(check_cart);
+                Intent intent = new Intent(SubMainActivity.this, Board_read_Activity.class);
+                intent.putExtra("checked", cartnum);
+                intent.putExtra("login_id", login_id);
+                startActivity(intent);            }
         });
 
         main_ad.setOnClickListener(new View.OnClickListener() {
@@ -527,13 +550,17 @@ public class SubMainActivity extends AppCompatActivity {
             SharedPreferences list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
             SharedPreferences list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
             SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
+            SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
+            SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
+            SharedPreferences img3 = getSharedPreferences("img3", MODE_PRIVATE);
+            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
 
             call_value = list_i.getInt("list_number_count",1);
             list_num.clear();
             b_item.clear();
 
              for(list_count=call_value; list_count >= 0; list_count=list_count-1){
-                String img = list_img.getString(String.valueOf(list_count),"");
+                String img = img1.getString(String.valueOf(list_count),"");
                 Bitmap bitmap;
                 if(img == ""){
                     bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
@@ -546,11 +573,11 @@ public class SubMainActivity extends AppCompatActivity {
                 String write = list_write.getString(String.valueOf(list_count), "no_writer");
                 String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
                 int renum = list_renum.getInt(String.valueOf(list_count), 0);
-                int heartnum = list_heartnum.getInt(String.valueOf(list_count),0);
+                int heartnum = cart_like.getInt(String.valueOf(list_count),0);
                 list_num.add(list_count);
                 boardItem= new BoardItem(resized,name, write, kind, renum, heartnum, null,null,null );
                 b_item.add(boardItem);
-                boardAdapter.notifyDataSetChanged();
+
 
 
 //                final Handler handler =new Handler();
@@ -577,6 +604,8 @@ public class SubMainActivity extends AppCompatActivity {
             }
 
 
+//                b_item.get(call_value).set_title("new "+b_item.get(call_value).getBod_title());
+//                boardAdapter.notifyDataSetChanged();
 
             for(int remove_num=call_value-1; remove_num >= 0; remove_num=remove_num-1){
                 if(b_item.get(remove_num).getBod_title() == "no_title" || b_item.get(remove_num).getBod_writer() == "no_writer") {
@@ -617,6 +646,12 @@ public class SubMainActivity extends AppCompatActivity {
             String cart = data.getStringExtra("cart");
             int cart_array = data.getIntExtra("checked", 0);
 
+
+//            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+//            b_item.get(cart_array).setHeart_num(cart_like.getInt(String.valueOf(cart_array),0));
+
+
+
             SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE);
             SharedPreferences.Editor edit_total_cart = total_list_cart.edit();
             list_cart_total = total_list_cart.getInt("list_cart_total", 1);
@@ -625,12 +660,16 @@ public class SubMainActivity extends AppCompatActivity {
 
             edit_total_cart.putInt("list_cart_total",list_cart_total+1);
             cartAdapter.notifyDataSetChanged();
+            boardAdapter.notifyDataSetChanged();
         } else if(requestCode == 20 && resultCode == 23) {
             SharedPreferences total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE);
             SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
             SharedPreferences.Editor edit_list_cart = list_id.edit();
             int cart_array = data.getIntExtra("checked", 0);
             edit_list_cart.remove(String.valueOf(cart_array));
+
+//            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+//            b_item.get(cart_array).setHeart_num(cart_like.getInt(String.valueOf(cart_array),0));
 
             //항목 속 찜 버튼 해제 시
             list_cart.clear();
@@ -649,7 +688,7 @@ public class SubMainActivity extends AppCompatActivity {
                     cartAdapter.notifyDataSetChanged();
                 }
             }
-
+            boardAdapter.notifyDataSetChanged();
         } else if(requestCode == 20 && resultCode == 40) {
             int check = data.getIntExtra("check",0);
             list_num.clear();
@@ -677,6 +716,7 @@ public class SubMainActivity extends AppCompatActivity {
         } else {
                 Toast.makeText(this, "저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
         }
+        boardAdapter.notifyDataSetChanged();
     } // onActivityResult of End.
 }// SubMainActivity Class End.
 

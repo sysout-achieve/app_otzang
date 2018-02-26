@@ -28,6 +28,10 @@ public class BoardItem {
     public String getBod_title(){
         return bod_title;
     }
+    public String set_title(String string){
+        bod_title = string;
+        return bod_title;
+    }
     public String getBod_writer(){
         return bod_writer;
     }
@@ -39,6 +43,9 @@ public class BoardItem {
     }
     public Integer getHeart_num(){
         return heart_num;
+    }
+    public void setHeart_num(Integer like){
+        this.heart_num = like;
     }
     public Bitmap getImg1(){
         return img1;
@@ -65,4 +72,5 @@ public class BoardItem {
         this.img2 = img2;
         this.img3 = img3;
     }
+
 }
