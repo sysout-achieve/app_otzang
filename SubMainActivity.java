@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +43,7 @@ public class SubMainActivity extends AppCompatActivity {
     String login_id;
 
     String log_id;
-
+    BoardItem boardItem;
     int list_count;
     int list_cart_count;
     int list_cart_total; // 찜목록 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_cart_num 저장
@@ -73,7 +74,10 @@ public class SubMainActivity extends AppCompatActivity {
             return null;
         }
     }
-
+    private void startAsync(){
+        AsyncNewMsg task = new AsyncNewMsg();
+        task.execute(10000,1,1);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -203,7 +207,7 @@ public class SubMainActivity extends AppCompatActivity {
         SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
         SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
         SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
-        SharedPreferences list_img = getSharedPreferences("list_imb", MODE_PRIVATE);
+        SharedPreferences list_img = getSharedPreferences("list_img", MODE_PRIVATE);
         SharedPreferences list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
         SharedPreferences list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
         SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
@@ -220,8 +224,13 @@ public class SubMainActivity extends AppCompatActivity {
         SharedPreferences.Editor edit_list_esti = list_esti.edit();
         SharedPreferences.Editor edit_list_review = list_review.edit();
         SharedPreferences.Editor edit_list_write = list_write.edit();
+        SharedPreferences.Editor edit_list_img = list_img.edit();
+        SharedPreferences.Editor edit_list_kind = list_kind.edit();
+
 
         //SharedPreferences 초기화
+//        edit_list_img.clear().commit();
+//        edit_list_kind.clear().commit();
 //        edit_total_cart.clear();
 //        edit_cart_on.clear();
 //        edit_list_i.clear();
@@ -264,7 +273,7 @@ public class SubMainActivity extends AppCompatActivity {
             int renum = list_renum.getInt(String.valueOf(list_count), 0);
             int heartnum = list_heartnum.getInt(String.valueOf(list_count),0);
             list_num.add(list_count);
-            BoardItem boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
+            boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
             b_item.add(boardItem);
 //            list_board.add(list_name.getString(String.valueOf(list_count),"no_content"));
 //            list_writer.add(list_write.getString(String.valueOf(list_count),"no_writer"));
@@ -336,17 +345,18 @@ public class SubMainActivity extends AppCompatActivity {
 //                    boardItem.setImg1(bitmap);
 //                    boardAdapter.notifyDataSetChanged();
 
-//                if(log_id.equals(login_id)){
-//                    Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
-//                    intent.putExtra("get_number", get_number);
-//                    intent.putExtra("login_id", login_id);
-//                    startActivityForResult(intent, 20);
-//                } else{
-//                    Intent intent = new Intent(SubMainActivity.this, Board_cart_Activity.class);
-//                    intent.putExtra("get_number", get_number);
-//                    intent.putExtra("login_id", login_id);
-//                    startActivityForResult(intent, 20);
-//                }
+                    /* 작성자 아이디 체크해서 다른 액티비티로 들어가서 화면 확인 */
+                if(log_id.equals(login_id)){
+                    Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
+                    intent.putExtra("get_number", get_number);
+                    intent.putExtra("login_id", login_id);
+                    startActivityForResult(intent, 20);
+                } else {
+                    Intent intent = new Intent(SubMainActivity.this, Board_cart_Activity.class);
+                    intent.putExtra("get_number", get_number);
+                    intent.putExtra("login_id", login_id);
+                    startActivityForResult(intent, 20);
+                }
             }
         });
 
@@ -513,18 +523,16 @@ public class SubMainActivity extends AppCompatActivity {
             SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
             SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
             SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
-            SharedPreferences list_img = getSharedPreferences("list_imb", MODE_PRIVATE);
+            SharedPreferences list_img = getSharedPreferences("list_img", MODE_PRIVATE);
             SharedPreferences list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
             SharedPreferences list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
             SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
 
             call_value = list_i.getInt("list_number_count",1);
-
             list_num.clear();
             b_item.clear();
-//            list_board.clear();
-//            list_writer.clear();
-            for(list_count=call_value-1; list_count >= 0; list_count=list_count-1){
+
+             for(list_count=call_value; list_count >= 0; list_count=list_count-1){
                 String img = list_img.getString(String.valueOf(list_count),"");
                 Bitmap bitmap;
                 if(img == ""){
@@ -533,24 +541,51 @@ public class SubMainActivity extends AppCompatActivity {
                     bitmap = StringToBitMap(img);
                 }
                 Bitmap resized = Bitmap.createScaledBitmap(bitmap,200, 250, true);
-                String name = list_name.getString(String.valueOf(list_count), "no_title");
+                final String name = list_name.getString(String.valueOf(list_count), "no_title");
                 String review = list_review.getString(String.valueOf(list_count), "no_review");
                 String write = list_write.getString(String.valueOf(list_count), "no_writer");
                 String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
                 int renum = list_renum.getInt(String.valueOf(list_count), 0);
                 int heartnum = list_heartnum.getInt(String.valueOf(list_count),0);
                 list_num.add(list_count);
-                BoardItem boardItem = new BoardItem(resized,name, write, kind, renum, heartnum, null,null,null );
+                boardItem= new BoardItem(resized,name, write, kind, renum, heartnum, null,null,null );
                 b_item.add(boardItem);
+                boardAdapter.notifyDataSetChanged();
+
+
+//                final Handler handler =new Handler();
+//                Thread thread = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try{
+//                            Thread.sleep(4000);
+//                        } catch (Exception e){
+//
+//                        }
+//                        handler.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                BoardItem bItem = b_item.get(call_value);
+//                                bItem.getBod_title().replace(name, "new "+name);
+//
+//                                boardAdapter.notifyDataSetChanged();
+//                            }
+//                        });
+//                    }
+//                });
+//                thread.start();
             }
 
+
+
             for(int remove_num=call_value-1; remove_num >= 0; remove_num=remove_num-1){
-                if(b_item.get(remove_num).getBod_title() == "no_title" && b_item.get(remove_num).getBod_writer() == "no_writer") {
+                if(b_item.get(remove_num).getBod_title() == "no_title" || b_item.get(remove_num).getBod_writer() == "no_writer") {
                     list_num.remove(remove_num);
                     b_item.remove(remove_num);
                     boardAdapter.notifyDataSetChanged();
                 }
             }
+
 //            for(list_count=call_value; list_count >= 0; list_count=list_count-1){
 //                list_num.add(list_count);
 //                list_board.add(list_name.getString(String.valueOf(list_count),"no_content"));
@@ -714,7 +749,6 @@ public class SubMainActivity extends AppCompatActivity {
         }
     }
 
-
     class cartAdapter extends BaseAdapter{
         Context context_cart;
         ArrayList<String> list_cart;
@@ -748,5 +782,42 @@ public class SubMainActivity extends AppCompatActivity {
             text_name.setText(list_cart.get(position));
 
             return convertView;
+        }
+    }
+
+    class AsyncNewMsg extends AsyncTask<Integer, Integer, Integer>{
+
+    int time = 0;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Integer... integers) {
+
+            try{
+                Thread.sleep(integers[0]);
+            } catch (Exception e){
+
+            }
+            time = 1;
+
+            return time;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            if(time == 1){
+
+            } else {
+
+            }
         }
     }
