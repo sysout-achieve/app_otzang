@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -81,6 +82,10 @@ ImageView bimg_3;
         final ImageView imgplus1 = (ImageView) findViewById(R.id.imgplus1);
         final ImageView imgplus2 =(ImageView) findViewById(R.id.imgplus2);
         final ImageView imgplus3 = (ImageView) findViewById(R.id.imgplus3);
+        final ImageView bimg1 = (ImageView) findViewById(R.id.bimg_1);
+        final ImageView bimg2 = (ImageView) findViewById(R.id.bimg_2);
+        final ImageView bimg3 = (ImageView) findViewById(R.id.bimg_3);
+
 
 
         ArrayAdapter spinnerAdapter;
@@ -174,13 +179,17 @@ ImageView bimg_3;
         save_btn_board.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Bitmap bitmap = ((BitmapDrawable)imgplus1.getDrawable()).getBitmap();
-            Bitmap bitmap1 = ((BitmapDrawable)imgplus2.getDrawable()).getBitmap();
-            Bitmap bitmap2 = ((BitmapDrawable)imgplus3.getDrawable()).getBitmap();
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
+            if(bimg1.getDrawable() != null) {
+                bitmap = ((BitmapDrawable) bimg1.getDrawable()).getBitmap();
+            }
+                String str_img1 =BitMapToString(bitmap);
 
-            String str_img1 =BitMapToString(bitmap);
-            String str_img2 = BitMapToString(bitmap1);
-            String str_img3 = BitMapToString(bitmap2);
+//            Bitmap bitmap1 = ((BitmapDrawable)bimg2.getDrawable()).getBitmap();
+//            Bitmap bitmap2 = ((BitmapDrawable)bimg3.getDrawable()).getBitmap();
+
+//            String str_img2 = BitMapToString(bitmap1);
+//            String str_img3 = BitMapToString(bitmap2);
 
                 SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
                 SharedPreferences list_title = getSharedPreferences("list_name", MODE_PRIVATE);
@@ -207,9 +216,9 @@ ImageView bimg_3;
                 String content = contents_txt.getText().toString();
                 call_value = list_i.getInt("list_number_count", 1);
 
-//                edit_img1.putString(String.valueOf(call_value), str_img1);
-//                edit_img2.putString(String.valueOf(call_value), str_img2);
-//                edit_img3.putString(String.valueOf(call_value), str_img3);
+                edit_img1.putString(String.valueOf(call_value), str_img1).commit();
+//                edit_img2.putString(String.valueOf(call_value), str_img2).commit();
+//                edit_img3.putString(String.valueOf(call_value), str_img3).commit();
 
                 edit_login_id_check.putString(String.valueOf(call_value), login_id).commit();
                 edit_list_title.putString(String.valueOf(call_value), title).commit();
@@ -229,6 +238,4 @@ ImageView bimg_3;
         });
 
     }
-
-
 }

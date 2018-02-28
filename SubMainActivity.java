@@ -60,9 +60,10 @@ public class SubMainActivity extends AppCompatActivity {
     // cart listview Item
     ArrayList<Integer> list_cart_num = new ArrayList<>();
     ArrayList<String> list_cart = new ArrayList<>();
+    ArrayList<Bitmap> list_cart_img = new ArrayList<>();
 
     boardAdapter boardAdapter = new boardAdapter(this, R.layout.listview_submain1, b_item, list_num);
-    cartAdapter cartAdapter = new cartAdapter(this, list_cart);
+    cartAdapter cartAdapter = new cartAdapter(this, list_cart, list_cart_img);
 
     public Bitmap StringToBitMap(String encodedString){ // 스트링으로 받은 이미지를 비트맵으로 다시 변환
         try{
@@ -269,7 +270,7 @@ public class SubMainActivity extends AppCompatActivity {
 
         call_value = list_i.getInt("list_number_count", 1);    //게시글 총 갯수 저장하는 변수
 
-        for(list_count=call_value-1; list_count >= 0; list_count=list_count-1){
+        for(list_count=call_value-1; list_count > 0; list_count=list_count-1){
             String img = img1.getString(String.valueOf(list_count),"");
             Bitmap bitmap;
             if(img == ""){
@@ -287,16 +288,12 @@ public class SubMainActivity extends AppCompatActivity {
             list_num.add(list_count);
             boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
             b_item.add(boardItem);
-//            list_board.add(list_name.getString(String.valueOf(list_count),"no_content"));
-//            list_writer.add(list_write.getString(String.valueOf(list_count),"no_writer"));
             }
 
-        for(int remove_num=call_value-1; remove_num >= 0; remove_num=remove_num-1){
+        for(int remove_num=call_value-2; remove_num > 0; remove_num=remove_num-1){
             if(b_item.get(remove_num).getBod_title() == "no_title" && b_item.get(remove_num).getBod_writer() == "no_writer") {
                 list_num.remove(remove_num);
                 b_item.remove(remove_num);
-//                list_board.remove(remove_num);
-//                list_writer.remove(remove_num);
                 boardAdapter.notifyDataSetChanged();
             }
         }
@@ -559,7 +556,7 @@ public class SubMainActivity extends AppCompatActivity {
             list_num.clear();
             b_item.clear();
 
-             for(list_count=call_value; list_count >= 0; list_count=list_count-1){
+             for(list_count=call_value; list_count > 0; list_count=list_count-1){
                 String img = img1.getString(String.valueOf(list_count),"");
                 Bitmap bitmap;
                 if(img == ""){
@@ -604,10 +601,10 @@ public class SubMainActivity extends AppCompatActivity {
             }
 
 
-//                b_item.get(call_value).set_title("new "+b_item.get(call_value).getBod_title());
+//                b_item.get(list_num.get(call_value)).set_title("new "+b_item.get(call_value).getBod_title());
 //                boardAdapter.notifyDataSetChanged();
 
-            for(int remove_num=call_value-1; remove_num >= 0; remove_num=remove_num-1){
+            for(int remove_num=call_value-1; remove_num > 0; remove_num=remove_num-1){
                 if(b_item.get(remove_num).getBod_title() == "no_title" || b_item.get(remove_num).getBod_writer() == "no_writer") {
                     list_num.remove(remove_num);
                     b_item.remove(remove_num);
@@ -633,6 +630,7 @@ public class SubMainActivity extends AppCompatActivity {
             SharedPreferences.Editor edit_list_i = list_i.edit();
             edit_list_i.putInt("list_number_count", call_value+1);
             edit_list_i.commit();
+            call_value = list_i.getInt("list_number_count", 0);
             Toast.makeText(this, "저장되었습니다.",Toast.LENGTH_SHORT).show();
         } else if(requestCode == 20 && resultCode ==20){
             String[] resend = data.getStringArrayExtra("resend");
@@ -646,9 +644,51 @@ public class SubMainActivity extends AppCompatActivity {
             String cart = data.getStringExtra("cart");
             int cart_array = data.getIntExtra("checked", 0);
 
+            SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
+            SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+            SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
+            SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
+            SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+            SharedPreferences list_img = getSharedPreferences("list_img", MODE_PRIVATE);
+            SharedPreferences list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
+            SharedPreferences list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
+            SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
+            SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
+            SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
+            SharedPreferences img3 = getSharedPreferences("img3", MODE_PRIVATE);
+            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+            SharedPreferences.Editor edit_cart_like = cart_like.edit();
 
-//            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
-//            b_item.get(cart_array).setHeart_num(cart_like.getInt(String.valueOf(cart_array),0));
+            list_num.clear();
+            b_item.clear();
+
+            for(list_count=call_value-1; list_count > 0; list_count=list_count-1){
+                String img = img1.getString(String.valueOf(list_count),"");
+                Bitmap bitmap;
+                if(img == ""){
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
+                } else{
+                    bitmap = StringToBitMap(img);
+                }
+                Bitmap resized = Bitmap.createScaledBitmap(bitmap,200, 250, true);
+                String name = list_name.getString(String.valueOf(list_count), "no_title");
+                String review = list_review.getString(String.valueOf(list_count), "no_review");
+                String write = list_write.getString(String.valueOf(list_count), "no_writer");
+                String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
+                int renum = list_renum.getInt(String.valueOf(list_count), 0);
+                int heartnum = cart_like.getInt(String.valueOf(list_count),0);
+                list_num.add(list_count);
+                boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
+                b_item.add(boardItem);
+            }
+
+            for(int remove_num=call_value-2; remove_num > 0; remove_num=remove_num-1){
+                if(b_item.get(remove_num).getBod_title() == "no_title" && b_item.get(remove_num).getBod_writer() == "no_writer") {
+                    list_num.remove(remove_num);
+                    b_item.remove(remove_num);
+                    boardAdapter.notifyDataSetChanged();
+                }
+            }
 
 
 
@@ -668,8 +708,52 @@ public class SubMainActivity extends AppCompatActivity {
             int cart_array = data.getIntExtra("checked", 0);
             edit_list_cart.remove(String.valueOf(cart_array));
 
+            SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
+            SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
+            SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
+            SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
+            SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
+            SharedPreferences list_img = getSharedPreferences("list_img", MODE_PRIVATE);
+            SharedPreferences list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
+            SharedPreferences list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
+            SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
+            SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
+            SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
+            SharedPreferences img3 = getSharedPreferences("img3", MODE_PRIVATE);
+            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+            SharedPreferences.Editor edit_cart_like = cart_like.edit();
 //            SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
 //            b_item.get(cart_array).setHeart_num(cart_like.getInt(String.valueOf(cart_array),0));
+            list_num.clear();
+            b_item.clear();
+
+            for(list_count=call_value-1; list_count > 0; list_count=list_count-1){
+                String img = img1.getString(String.valueOf(list_count),"");
+                Bitmap bitmap;
+                if(img == ""){
+                    bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
+                } else{
+                    bitmap = StringToBitMap(img);
+                }
+                Bitmap resized = Bitmap.createScaledBitmap(bitmap,200, 250, true);
+                String name = list_name.getString(String.valueOf(list_count), "no_title");
+                String review = list_review.getString(String.valueOf(list_count), "no_review");
+                String write = list_write.getString(String.valueOf(list_count), "no_writer");
+                String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
+                int renum = list_renum.getInt(String.valueOf(list_count), 0);
+                int heartnum = cart_like.getInt(String.valueOf(list_count),0);
+                list_num.add(list_count);
+                boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
+                b_item.add(boardItem);
+            }
+
+            for(int remove_num=call_value-2; remove_num > 0; remove_num=remove_num-1){
+                if(b_item.get(remove_num).getBod_title() == "no_title" && b_item.get(remove_num).getBod_writer() == "no_writer") {
+                    list_num.remove(remove_num);
+                    b_item.remove(remove_num);
+                    boardAdapter.notifyDataSetChanged();
+                }
+            }
 
             //항목 속 찜 버튼 해제 시
             list_cart.clear();
@@ -696,13 +780,13 @@ public class SubMainActivity extends AppCompatActivity {
             list_writer.clear();
             SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
             SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
-            for(list_count=call_value-1; list_count >= 0; list_count=list_count-1){
+            for(list_count=call_value; list_count > 0; list_count=list_count-1){
                 list_num.add(list_count);
                 list_board.add(list_name.getString(String.valueOf(list_count),"no_content"));
                 list_writer.add(list_write.getString(String.valueOf(list_count),"no_writer"));
             }
 
-            for(int remove_num=call_value-1; remove_num >= 0; remove_num=remove_num-1){
+            for(int remove_num=call_value; remove_num > 0; remove_num=remove_num-1){
                 if(list_board.get(remove_num).toString() == "no_content" && list_writer.get(remove_num).toString() == "no_writer") {
                     list_num.remove(remove_num);
                     list_board.remove(remove_num);
@@ -792,10 +876,12 @@ public class SubMainActivity extends AppCompatActivity {
     class cartAdapter extends BaseAdapter{
         Context context_cart;
         ArrayList<String> list_cart;
+        ArrayList<Bitmap> list_cart_img;
 
-        public cartAdapter(Context context,ArrayList<String> list_cart){
+        public cartAdapter(Context context,ArrayList<String> list_cart, ArrayList<Bitmap> list_cart_img){
             this.context_cart = context;
             this.list_cart = list_cart;
+            this.list_cart_img = list_cart_img;
         }
         @Override
         public int getCount() {
@@ -819,6 +905,8 @@ public class SubMainActivity extends AppCompatActivity {
                 convertView = inflater.inflate(R.layout.listview_submain_cart,null);
             }
             TextView text_name = (TextView) convertView.findViewById(R.id.text_name);
+            ImageView img_cart = (ImageView) convertView.findViewById(R.id.img_cart);
+
             text_name.setText(list_cart.get(position));
 
             return convertView;
