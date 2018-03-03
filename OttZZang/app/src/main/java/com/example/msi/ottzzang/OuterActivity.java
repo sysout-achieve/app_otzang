@@ -1,6 +1,7 @@
 package com.example.msi.ottzzang;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -9,12 +10,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
@@ -45,6 +50,101 @@ public class OuterActivity extends AppCompatActivity {
             String login_id;
             int total_i;
 
+            Handler handler_poing_img;
+
+    ImageView tp1;
+    ImageView tp2;
+    ImageView tp3;
+    ImageView tp4;
+    ImageView tp5;
+    ImageView tp6;
+    ImageView tp7;
+    ImageView tp8;
+    ImageView tp9;
+    ImageView tp10;
+    ImageView tp11;
+    ImageView tp12;
+    ImageView tp13;
+
+
+
+    private  void setimg(final ImageView img_e, final int time_e){
+        final Handler handler = new Handler();
+        Thread th_img_eraser = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(time_e);
+                } catch (Exception e) {
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        img_e.setImageResource(0);
+                    }
+                });
+            }
+        });
+        th_img_eraser.start();
+    }
+
+    private void dialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(OuterActivity.this);
+        builder.setTitle("포인트 획득하셨습니다.");
+        builder.setMessage("10p");
+        builder.setNegativeButton("하던 일 하기", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(),"포인트는 추가됩니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setPositiveButton("확인하러 가기", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(),"확인!",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                intent.putExtra("login_id",login_id);
+                intent.putExtra("check_po", 1);
+                startActivity(intent);
+            }
+        });
+        builder.show();
+    }
+
+    private void clickpoint(ImageView img_point){
+        img_point.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences point = getSharedPreferences("point",MODE_PRIVATE);
+                SharedPreferences.Editor edit_point = point.edit();
+                edit_point.putInt(login_id,point.getInt(login_id,0)+10).commit();
+                dialog();
+            }
+        });
+    }
+
+    private void openimg(final ImageView i1, final ImageView i2, final int time) {
+        handler_poing_img = new Handler();
+        Thread th_point = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(time);
+                } catch (Exception e) {
+
+                }
+                handler_poing_img.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        i1.setImageResource(0);
+                        i2.setImageResource(R.drawable.transparent);
+                    }
+                });
+            }
+        });
+        th_point.start();
+    }
 
     public Bitmap StringToBitMap(String encodedString){ // 스트링으로 받은 이미지를 비트맵으로 다시 변환
         try{
@@ -82,6 +182,109 @@ public class OuterActivity extends AppCompatActivity {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
+        /* Constraint animation event*/
+
+        /* 시간이 지나고 날파리가 날아다님
+        * 날파리를 잡으면 이벤트 다이얼로그와 함께 포인트를 받는다 */
+
+final ImageView point_img1 = (ImageView) findViewById(R.id.point_img1);
+final ImageView point_img2 = (ImageView) findViewById(R.id.point_img2);
+        tp1 = (ImageView) findViewById(R.id.tp_img1);
+        tp2 = (ImageView) findViewById(R.id.tp_img2);
+        tp3 = (ImageView) findViewById(R.id.tp_img3);
+        tp4 = (ImageView) findViewById(R.id.tp_img4);
+        tp5 = (ImageView) findViewById(R.id.tp_img5);
+        tp6 = (ImageView) findViewById(R.id.tp_img6);
+        tp7 = (ImageView) findViewById(R.id.tp_img7);
+        tp8 = (ImageView) findViewById(R.id.tp_img8);
+        tp9 = (ImageView) findViewById(R.id.tp_img9);
+        tp10 = (ImageView) findViewById(R.id.tp_img10);
+        tp11 = (ImageView) findViewById(R.id.tp_img11);
+        tp12 = (ImageView) findViewById(R.id.tp_img12);
+        tp13 = (ImageView) findViewById(R.id.tp_img13);
+
+        /* 이미지에 맞춰서 클릭 할 수 있는 이미지 뷰 생성 및 삭제*/
+        /* 이미지 생성되면서 x축 ++ */
+
+                openimg(tp1, tp1,5300);
+                openimg(tp1, tp2,5600);
+                openimg(tp2, tp3,5900);
+                openimg(tp3, tp4,6200);
+                openimg(tp4, tp5,6500);
+        /*이미지가 돌아가는 부분*/
+                openimg(tp5, tp6,6800);
+                openimg(tp6, tp7,7050);
+                openimg(tp7, tp8,7300);
+                openimg(tp8, tp9,7600);
+                openimg(tp9, tp10,7900);
+
+        /* 이미지 마지막으로 가면서 사라지는 부분*/
+                openimg(tp10, tp11,8300);
+                openimg(tp11, tp12,8700);
+                openimg(tp12, tp13,9000);
+
+                setimg(tp13,9200);
+                setimg(point_img2,9200);
+        clickpoint(tp1);
+        clickpoint(tp2);
+        clickpoint(tp3);
+        clickpoint(tp4);
+        clickpoint(tp5);
+        clickpoint(tp6);
+        clickpoint(tp7);
+        clickpoint(tp8);
+        clickpoint(tp9);
+        clickpoint(tp10);
+        clickpoint(tp11);
+        clickpoint(tp12);
+        clickpoint(tp13);
+
+
+        final Animation anim_start= AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_start);
+        final Animation anim_rot = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.anim_rotate);
+        final Animation anim_fin = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.anim_fin);
+
+        final Handler handler = new Handler();
+        Thread th = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    Thread.sleep(5000);
+                }catch (Exception e){
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        point_img1.setImageResource(R.drawable.point_img);
+                        point_img1.startAnimation(anim_start);
+                    }
+                });
+
+                try{
+                    Thread.sleep(1500);
+                }catch (Exception e){
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        point_img1.setImageResource(0);
+                        point_img2.setImageResource(R.drawable.point_img);
+                        point_img2.startAnimation(anim_rot);
+                    }
+                });
+                try{
+                    Thread.sleep(1800);
+                }catch (Exception e){
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        point_img2.startAnimation(anim_fin);
+                    }
+                });
+            }
+        });
+        th.start();
 
         /* OuterActivity */
         Intent intent = getIntent();
@@ -125,28 +328,6 @@ public class OuterActivity extends AppCompatActivity {
         }
 
         final ListView listView = (ListView) findViewById(R.id.listview);
-//        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.longpadding);
-//        Bitmap resized1 = Bitmap.createScaledBitmap(bitmap1, 300, 400, true);
-//        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.parka);
-//        Bitmap resized2 = Bitmap.createScaledBitmap(bitmap2, 300, 400, true);
-//        Bitmap bitmap3 = BitmapFactory.decodeResource(getResources(),R.drawable.coat1);
-//        Bitmap resized3 = Bitmap.createScaledBitmap(bitmap3, 300, 400, true);
-//        Bitmap bitmap4 = BitmapFactory.decodeResource(getResources(),R.drawable.coat2);
-//        Bitmap resized4 = Bitmap.createScaledBitmap(bitmap4, 300, 400, true);
-//        Bitmap bitmap5 = BitmapFactory.decodeResource(getResources(),R.drawable.padding);
-//        Bitmap resized5 = Bitmap.createScaledBitmap(bitmap5, 300, 400, true);
-//        OuterItem outerItem1 = new OuterItem(resized1, "롱패딩", "L");
-//        OuterItem outerItem2 = new OuterItem(resized2, "개파카", "M");
-//        OuterItem outerItem3 = new OuterItem(resized3, "코트1", "M");
-//        OuterItem outerItem4 = new OuterItem(resized4, "코트2", "L");
-//        OuterItem outerItem5 = new OuterItem(resized5, "패딩", "M");
-//
-//        data.add(outerItem1);
-//        data.add(outerItem2);
-//        data.add(outerItem3);
-//        data.add(outerItem4);
-//        data.add(outerItem5);
-
         listView.setAdapter(adapter);
 
 
@@ -184,6 +365,8 @@ public class OuterActivity extends AppCompatActivity {
                 startActivityForResult(intent,outerrequest_code);
             }
         });
+
+
     }
 
     @Override
@@ -261,9 +444,6 @@ public class OuterActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
-
-
 
             if(convertView == null){
                 this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
