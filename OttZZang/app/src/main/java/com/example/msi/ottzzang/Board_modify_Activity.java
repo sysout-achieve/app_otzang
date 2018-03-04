@@ -23,13 +23,18 @@ public class Board_modify_Activity extends AppCompatActivity {
     int cartnum;
     String login_id;
     int checked;
+    int i;          // 몇 명이 찜 누른지 확인하는 변수
+    int re;
 
     EditText title_board_modi;
     EditText writer_name_modi;
     EditText esti_txt_modi;
     EditText contents_txt_modi;
+    TextView get_heart;
+    TextView reply_num;
 
     SharedPreferences cart_like;
+    SharedPreferences get_re_num;
 
     public Bitmap StringToBitMap(String encodedString){ // 스트링으로 받은 이미지를 비트맵으로 다시 변환
         try{
@@ -151,6 +156,13 @@ public class Board_modify_Activity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        re = get_re_num.getInt(checked+"total",0);
+        reply_num.setText(""+re);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_modification);
@@ -166,7 +178,9 @@ public class Board_modify_Activity extends AppCompatActivity {
         ImageView img1_modi = (ImageView) findViewById(R.id.img1_modi);
         TextView cate_txt_modi = (TextView) findViewById(R.id.cate_txt_modi);
         ImageView viewimg = (ImageView) findViewById(R.id.viewimg);
-        final TextView get_heart = (TextView) findViewById(R.id.get_ht);
+        get_heart = (TextView) findViewById(R.id.get_ht);
+        ImageView reply_btn = (ImageView) findViewById(R.id.reply_btn_modi);
+        reply_num = (TextView) findViewById(R.id.get_re);
 
         SharedPreferences list_title = getSharedPreferences("list_name", MODE_PRIVATE);
         SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
@@ -175,6 +189,7 @@ public class Board_modify_Activity extends AppCompatActivity {
         SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
         SharedPreferences list_cate = getSharedPreferences("list_kind", MODE_PRIVATE);
         cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+        get_re_num = getSharedPreferences("total", MODE_PRIVATE);
 
         SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
         SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
@@ -190,7 +205,7 @@ public class Board_modify_Activity extends AppCompatActivity {
         contents_txt_modi.setText(list_content.getString(String.valueOf(checked),""));
         writer_name_modi.setText(list_writer.getString(String.valueOf(checked),""));
         cate_txt_modi.setText(list_cate.getString(String.valueOf(checked),""));
-//        get_heart.setText(cart_like.getInt(String.valueOf(checked),0));
+        get_heart.setText(""+(cart_like.getInt(String.valueOf(checked),0)));
 
         String str_img1 = img1.getString(String.valueOf(checked),"");
         if(str_img1!=""){
@@ -235,6 +250,15 @@ public class Board_modify_Activity extends AppCompatActivity {
             }
         });
 
+        reply_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplication(),ReplyActivity.class);
+                intent.putExtra("checked", checked);
+                intent.putExtra("login_id", login_id);
+                startActivity(intent);
+            }
+        });
 
         save_btn_modi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -270,9 +294,16 @@ public class Board_modify_Activity extends AppCompatActivity {
                     SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
                     SharedPreferences.Editor edit_cart_like = cart_like.edit();
 
-                    int i = cart_like.getInt(String.valueOf(checked),0);
+                    i = cart_like.getInt(String.valueOf(checked),0);
                     i = i+1;
-                    get_heart.setText(i);
+                    Handler handler = new Handler();
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            get_heart.setText(""+i);
+                        }
+                    });
                     edit_cart_like.putInt(String.valueOf(checked),i).commit();
 
                     //찜목록 Sharedpreference 저장(각 ID에 따라 다르게 저장해야함)
@@ -306,9 +337,16 @@ public class Board_modify_Activity extends AppCompatActivity {
                     SharedPreferences cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
                     SharedPreferences.Editor edit_cart_like = cart_like.edit();
 
-                    int i = cart_like.getInt(String.valueOf(checked),0);
+                    i = cart_like.getInt(String.valueOf(checked),0);
                     i = i-1;
-                    get_heart.setText(i);
+                    Handler handler = new Handler();
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            get_heart.setText(""+i);
+                        }
+                    });
                     edit_cart_like.putInt(String.valueOf(checked),i).commit();
 
                     //찜목록 Sharedpreference에서 제거(각 ID에 따라 다르게 저장해야함)
