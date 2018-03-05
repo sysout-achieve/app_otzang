@@ -28,6 +28,7 @@ public class Board_cart_Activity extends AppCompatActivity {
     TextView reply_num;
     TextView get_heart;
 
+    SharedPreferences size;
     SharedPreferences cart_like;
     SharedPreferences get_reply_num;
 
@@ -45,7 +46,7 @@ public class Board_cart_Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        re = get_reply_num.getInt(get_number+"total", 0);
+        re = size.getInt(get_number+"size", 0);
         reply_num.setText(""+re);
     }
 
@@ -66,9 +67,6 @@ public class Board_cart_Activity extends AppCompatActivity {
         ImageView reply_btn = (ImageView) findViewById(R.id.reply_btn_rd);
         reply_num = (TextView) findViewById(R.id.get_re_rd);
 
-
-
-
         Intent intent = getIntent();
         get_number = intent.getIntExtra("get_number",1);
         final String login_id = intent.getStringExtra("login_id");
@@ -81,6 +79,7 @@ public class Board_cart_Activity extends AppCompatActivity {
         SharedPreferences list_cate = getSharedPreferences("list_kind", MODE_PRIVATE);
         cart_like = getSharedPreferences("cart_like", MODE_PRIVATE);
         get_reply_num = getSharedPreferences("total",MODE_PRIVATE);
+        size = getSharedPreferences("size", MODE_PRIVATE);
 
 
         SharedPreferences cart_on = getSharedPreferences(String.valueOf(get_number),MODE_PRIVATE);

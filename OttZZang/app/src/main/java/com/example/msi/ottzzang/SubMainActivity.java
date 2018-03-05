@@ -67,6 +67,7 @@ public class SubMainActivity extends AppCompatActivity {
     SharedPreferences img2;
     SharedPreferences img3;
     SharedPreferences cart_like;
+    SharedPreferences size;
     SharedPreferences total_list_cart;
     /*---------------------------------------*/
     ArrayList<BoardItem> b_item = new ArrayList<>();
@@ -118,7 +119,7 @@ public class SubMainActivity extends AppCompatActivity {
             String review = list_review.getString(String.valueOf(list_count), "no_review");
             String write = list_write.getString(String.valueOf(list_count), "no_writer");
             String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
-            int renum = list_renum.getInt(String.valueOf(list_count), 0);
+            int renum = size.getInt(list_count+"size", 0);
             int heartnum = cart_like.getInt(String.valueOf(list_count),0);
             list_num.add(list_count);
             boardItem = new BoardItem(resized, name, write, kind, renum, heartnum );
@@ -276,15 +277,7 @@ public class SubMainActivity extends AppCompatActivity {
         });
         thread_ad.start();
 
-
-
-//        ImageView delete_btn = (ImageView) findViewById(R.id.delete_btn);
-//        ImageView read_btn = (ImageView) findViewById(R.id.read_btn);
         final SharedPreferences board = getSharedPreferences("board", MODE_PRIVATE);
-//        SharedPreferences list_count_save = getSharedPreferences("login_count", MODE_PRIVATE);
-//        SharedPreferences.Editor edit_list_count = list_count_save.edit();
-//
-
 
         //리스트뷰 게시판
         String list = "list";
@@ -295,15 +288,18 @@ public class SubMainActivity extends AppCompatActivity {
          list_write = getSharedPreferences("list_write", MODE_PRIVATE);
          list_img = getSharedPreferences("list_img", MODE_PRIVATE);
          list_kind = getSharedPreferences("list_kind", MODE_PRIVATE);
-         list_renum = getSharedPreferences("list_renum", MODE_PRIVATE);
+         list_renum = getSharedPreferences("total", MODE_PRIVATE);
         SharedPreferences list_heartnum = getSharedPreferences("list_heartnum", MODE_PRIVATE);
          img1 = getSharedPreferences("img1", MODE_PRIVATE);
          img2 = getSharedPreferences("img2", MODE_PRIVATE);
          img3 = getSharedPreferences("img3", MODE_PRIVATE);
          cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
+         size = getSharedPreferences("size",MODE_PRIVATE);
         SharedPreferences.Editor edit_cart_like = cart_like.edit();
         SharedPreferences point = getSharedPreferences("point",MODE_PRIVATE);
         SharedPreferences.Editor edit_point = point.edit();
+        SharedPreferences re_num =getSharedPreferences("re-num", MODE_PRIVATE);
+        SharedPreferences.Editor edit_re_num = re_num.edit();
 
 
         SharedPreferences cart_on = getSharedPreferences("cart_on",MODE_PRIVATE);
@@ -324,6 +320,7 @@ public class SubMainActivity extends AppCompatActivity {
 
 
         //SharedPreferences 초기화
+//        edit_re_num.clear().commit();
 //        edit_point.clear().commit();
 //        edit_cart_like.clear().commit();
 //        edit_img1.clear().commit();
@@ -356,51 +353,6 @@ public class SubMainActivity extends AppCompatActivity {
         listview.setAdapter(boardAdapter);
 
         call_value = list_i.getInt("list_number_count", 1);    //게시글 총 갯수 저장하는 변수
-//
-//        for(list_count=call_value-1; list_count > 0; list_count=list_count-1){
-//            String img = img1.getString(String.valueOf(list_count),"");
-//            Bitmap bitmap;
-//            if(img == ""){
-//                bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.noimage);
-//            } else{
-//                bitmap = StringToBitMap(img);
-//            }
-//            Bitmap resized = Bitmap.createScaledBitmap(bitmap,200, 250, true);
-//            String name = list_name.getString(String.valueOf(list_count), "no_title");
-//            String review = list_review.getString(String.valueOf(list_count), "no_review");
-//            String write = list_write.getString(String.valueOf(list_count), "no_writer");
-//            String kind = list_kind.getString(String.valueOf(list_count), "no_kind");
-//            int renum = list_renum.getInt(String.valueOf(list_count), 0);
-//            int heartnum = cart_like.getInt(String.valueOf(list_count),0);
-//            list_num.add(list_count);
-//            boardItem = new BoardItem(resized, name, write, kind, renum, heartnum, null, null,null );
-//            b_item.add(boardItem);
-//            }
-//
-//        for(int remove_num=0; remove_num > call_value-1; remove_num=remove_num+1){
-//            if(b_item.get(remove_num).getBod_title() == "no_title" && b_item.get(remove_num).getBod_writer() == "no_writer") {
-//                list_num.remove(remove_num);
-//                b_item.remove(remove_num);
-//                boardAdapter.notifyDataSetChanged();
-//            }
-//        }
-//
-//        list_cart_total = total_list_cart.getInt("list_cart_total", 1);
-
-//        //리스트뷰 찜 목록!!!!!!!!!!!!!!
-//        SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
-//        for(list_cart_count=1; list_cart_count <= call_value; list_cart_count=list_cart_count+1){
-//            list_cart_num.add(list_cart_count);
-//            list_cart.add(list_id.getString(String.valueOf(list_cart_count),"no_cart"));
-//        }
-//        for( int remove_cart = call_value-1 ;   remove_cart >= 0 ; remove_cart=remove_cart-1){
-//            if(list_cart.get(remove_cart).toString()=="no_cart"){
-//                list_cart_num.remove(remove_cart);
-//                list_cart.remove(remove_cart);
-//                cartAdapter.notifyDataSetChanged();
-//            }
-//        }
-
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -421,25 +373,6 @@ public class SubMainActivity extends AppCompatActivity {
 //                    bitmap = StringToBitMap(str_img1);
 //                }
                 Bitmap resize = Bitmap.createScaledBitmap(bitmap,10, 15, true);
-
-//                String str_img2 =img2.getString(String.valueOf(get_number), "");
-//                Bitmap bitmap1;
-//                if(str_img2 == ""){
-//                    bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
-//                } else {
-//                    bitmap1 = StringToBitMap(str_img2);
-//                }
-//                String str_img3 =img3.getString(String.valueOf(get_number), "");
-//                Bitmap bitmap2;
-//                if(str_img3 == ""){
-//                    bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.noimage);
-//                } else {
-//                    bitmap2 = StringToBitMap(str_img3);
-//                }
-
-//                    BoardItem boardItem = b_item.get(check_list);
-//                    boardItem.setImg1(bitmap);
-//                    boardAdapter.notifyDataSetChanged();
 
                     /* 작성자 아이디 체크해서 다른 액티비티로 들어가서 화면 확인 */
                 if(log_id.equals(login_id)){
@@ -476,122 +409,6 @@ public class SubMainActivity extends AppCompatActivity {
             }
         });
 
-//        delete_board_btn.setOnClickListener(new View.OnClickListener() { //게시판 목록 삭제
-//            @Override
-//            public void onClick(View v) {
-//
-//                count = boardAdapter.getCount();
-//
-//                if(count > 0) {
-//                    checked = listview.getCheckedItemPosition();
-//                    if(checked > -1 && checked < count){
-//                        SharedPreferences login_id_check = getSharedPreferences("login_id_check", MODE_PRIVATE);
-//                        int list_delete_number = list_num.get(checked);
-//                        log_id = login_id_check.getString(String.valueOf(list_delete_number), "no_writer");
-//
-//                        if(login_id.equals(log_id)) {
-//
-//                            list_num.remove(checked);
-//                            list_board.remove(checked);
-//                            list_writer.remove(checked);
-//
-//                            SharedPreferences list_i = getSharedPreferences("list_number_count", MODE_PRIVATE);
-//                            SharedPreferences list_name = getSharedPreferences("list_name", MODE_PRIVATE);
-//                            SharedPreferences list_esti = getSharedPreferences("list_esti", MODE_PRIVATE);
-//                            SharedPreferences list_review = getSharedPreferences("list_review", MODE_PRIVATE);
-//                            SharedPreferences list_write = getSharedPreferences("list_write", MODE_PRIVATE);
-//
-//                            SharedPreferences.Editor edit_list_i = list_i.edit();
-//                            SharedPreferences.Editor edit_list_name = list_name.edit();
-//                            SharedPreferences.Editor edit_list_esti = list_esti.edit();
-//                            SharedPreferences.Editor edit_list_review = list_review.edit();
-//                            SharedPreferences.Editor edit_list_write = list_write.edit();
-//
-//                            edit_list_name.remove(String.valueOf(list_delete_number));
-//                            edit_list_esti.remove(String.valueOf(list_delete_number));
-//                            edit_list_review.remove(String.valueOf(list_delete_number));
-//                            edit_list_write.remove(String.valueOf(list_delete_number));
-//
-//                            edit_list_name.commit();
-//                            edit_list_esti.commit();
-//                            edit_list_review.commit();
-//                            edit_list_write.commit();
-//
-//                            listview.clearChoices();
-//                            boardAdapter.notifyDataSetChanged();
-//                            Toast.makeText(SubMainActivity.this, list_delete_number + "번 항목을 삭제하셨습니다.", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(SubMainActivity.this, "삭제 권한이 없습니다.", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                }
-//            }
-//        });
-
-
-
-//        read_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) { //장바구니에서 읽기 버튼 클릭 이벤트
-//                count_cart = cartAdapter.getCount();
-//                check_cart = listview_cart.getCheckedItemPosition();
-//                if(check_cart > -1 && check_cart < count_cart){
-//                    int i = list_cart_num.get(check_cart);
-//                    Intent intent = new Intent(SubMainActivity.this, Board_read_Activity.class);
-//                    intent.putExtra("checked", i);
-//                    intent.putExtra("login_id", login_id);
-//                    startActivity(intent);
-//                }
-//            }
-//        });
-//
-//        delete_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) { //찜목록 탭에서 삭제 버튼 클릭 시
-//                count_cart = cartAdapter.getCount();
-//                if(count_cart >0){
-//                    check_cart = listview_cart.getCheckedItemPosition();
-//                    if(check_cart > -1 && check_cart < count_cart){
-//                        //찜목록에서 바로 찜 삭제하면 하트 지워짐
-//                        int i = list_cart_num.get(check_cart);
-//                        SharedPreferences cart_on = getSharedPreferences(String.valueOf(i),MODE_PRIVATE);
-//                        SharedPreferences.Editor edit_cart_on = cart_on.edit();
-//                        edit_cart_on.putInt(login_id, 0);
-//                        edit_cart_on.commit();
-//                        SharedPreferences list_id = getSharedPreferences(login_id+"_cart", MODE_PRIVATE);
-//                        SharedPreferences.Editor edit_list_cart = list_id.edit();
-//                        edit_list_cart.remove(String.valueOf(i));
-//                        edit_list_cart.commit();
-//
-//                        list_cart_num.remove(check_cart);
-//                        list_cart.remove(check_cart);
-//
-//                        listview_cart.clearChoices();
-//                        cartAdapter.notifyDataSetChanged();
-//                    }
-//                }
-//            }
-//        });
-
-//        modify_btn.setOnClickListener(new View.OnClickListener() { // 읽기 버튼 클릭 이벤트 확정시 주석도 제거
-//            @Override
-//            public void onClick(View v) {
-//
-//                count = boardAdapter.getCount();
-//
-//                if (count > 0){
-//                    checked = listview.getCheckedItemPosition();
-//                    if (checked > -1 && checked < count) {
-//                        Intent intent = new Intent(SubMainActivity.this, Board_modify_Activity.class);
-//                        int get_list_num = list_num.get(checked);
-//
-//                        intent.putExtra("login_id", login_id);
-//                        intent.putExtra("checked", get_list_num);
-//                        startActivityForResult(intent, 20 );
-//                    }
-//                }
-//            }
-//        });
 
 
         write_btn.setOnClickListener(new View.OnClickListener() {

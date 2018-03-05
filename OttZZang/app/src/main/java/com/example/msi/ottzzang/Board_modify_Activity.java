@@ -33,6 +33,7 @@ public class Board_modify_Activity extends AppCompatActivity {
     TextView get_heart;
     TextView reply_num;
 
+    SharedPreferences size;
     SharedPreferences cart_like;
     SharedPreferences get_re_num;
 
@@ -158,7 +159,7 @@ public class Board_modify_Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        re = get_re_num.getInt(checked+"total",0);
+        re = size.getInt(checked+"size",0);
         reply_num.setText(""+re);
     }
 
@@ -190,6 +191,7 @@ public class Board_modify_Activity extends AppCompatActivity {
         SharedPreferences list_cate = getSharedPreferences("list_kind", MODE_PRIVATE);
         cart_like = getSharedPreferences("cart_like",MODE_PRIVATE);
         get_re_num = getSharedPreferences("total", MODE_PRIVATE);
+        size = getSharedPreferences("size",MODE_PRIVATE);
 
         SharedPreferences img1 = getSharedPreferences("img1", MODE_PRIVATE);
         SharedPreferences img2 = getSharedPreferences("img2", MODE_PRIVATE);
@@ -256,6 +258,7 @@ public class Board_modify_Activity extends AppCompatActivity {
                 Intent intent = new Intent(getApplication(),ReplyActivity.class);
                 intent.putExtra("checked", checked);
                 intent.putExtra("login_id", login_id);
+                intent.putExtra("delete_authority",1);
                 startActivity(intent);
             }
         });

@@ -23,11 +23,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
 
 public class ReplyActivity extends AppCompatActivity {
 
@@ -37,19 +42,35 @@ public class ReplyActivity extends AppCompatActivity {
     replyAdapter replyAdapter = new replyAdapter(this, R.layout.listview_reply, replyItems);
 
     String login_id;
+    String idee; // 댓글의 아이디 저장하는 변수
     int check;
     int total_i;
 
-    int dialog_i;
+    int check_position_listnum;
+    int posi;
+    int delete_authority;
+    int bad_reply;
 
     EditText re_txt;
     ImageView pro_img;
     TextView id_txt;
     SharedPreferences txt;
+
     SharedPreferences img;
     SharedPreferences re_id;
     SharedPreferences id_check;
     SharedPreferences total;
+    SharedPreferences size;
+    SharedPreferences point;
+    SharedPreferences user_autho;
+
+
+    SharedPreferences.Editor edit_user_autho;
+    SharedPreferences.Editor edit_point;
+    SharedPreferences.Editor edit_size;
+    SharedPreferences.Editor edit_txt;
+    SharedPreferences.Editor edit_img;
+    SharedPreferences.Editor edit_re_id;
 
     public Bitmap StringToBitMap(String encodedString){ // 스트링으로 받은 이미지를 비트맵으로 다시 변환
         try{
@@ -70,6 +91,61 @@ public class ReplyActivity extends AppCompatActivity {
         return temp;
     }
 
+    private void dialog_delete_autho(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(ReplyActivity.this);
+        builder.setTitle("포인트를 사용하여 댓글을 삭제하시겠습니까?");
+        builder.setMessage("100 point 차감");
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                edit_txt.remove(""+check_position_listnum).commit();
+                edit_img.remove(""+check_position_listnum).commit();
+                edit_re_id.remove(""+check_position_listnum).commit();
+                re_i.remove(posi);
+
+                replyItems.remove(posi);
+                int size_item = replyItems.size();
+                edit_size.putInt(check+"size",size_item).commit();
+
+                int user_point = point.getInt(login_id,0)-100;
+                edit_point.putInt(login_id,user_point).commit();
+                Toast.makeText(ReplyActivity.this, "포인트를 차감하여 삭제하였습니다.",Toast.LENGTH_SHORT).show();
+
+                dialog_nowrite();
+                replyAdapter.notifyDataSetChanged();
+            }
+        });
+        builder.show();
+    }
+    private void dialog_nowrite(){      // 더 이상 이 게시글에 댓글을 달 수 없게 함
+        AlertDialog.Builder builder = new AlertDialog.Builder(ReplyActivity.this);
+        builder.setTitle("신고하기");
+        builder.setMessage("댓글작성자가 더 이상 이 게시물에 댓글을 작성할 수 없게 할까요?");
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                int x =user_autho.getInt("total_autho",1);
+                edit_user_autho.putString(""+user_autho.getInt(""+x,1),idee).commit();
+                x= x+1;
+                edit_user_autho.putInt("total_autho",x).commit();
+                Toast.makeText(ReplyActivity.this,"작성자는 더 이상 이 게시물에 글을 작성할 수 없습니다.",Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.show();
+    }
     private void dialog_delete(){
         AlertDialog.Builder builder = new AlertDialog.Builder(ReplyActivity.this);
         builder.setTitle("삭제하시겠습니까?");
@@ -82,7 +158,16 @@ public class ReplyActivity extends AppCompatActivity {
         builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog_i =1;
+                edit_txt.remove(""+check_position_listnum).commit();
+                edit_img.remove(""+check_position_listnum).commit();
+                edit_re_id.remove(""+check_position_listnum).commit();
+                re_i.remove(posi);
+
+                replyItems.remove(posi);
+                int size_item = replyItems.size();
+                edit_size.putInt(check+"size",size_item).commit();
+
+                replyAdapter.notifyDataSetChanged();
             }
         });
         builder.show();
@@ -92,7 +177,17 @@ public class ReplyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply);
+            /*Stetho----------------------------*/
+        Stetho.initializeWithDefaults(this);
 
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
+
+
+
+
+        /*ReplyActivity----------------------------*/
         Button reply_btn = (Button) findViewById(R.id.reply_save_btn);
         re_txt = (EditText) findViewById(R.id.re_write_txt);
         pro_img = (ImageView) findViewById(R.id.profile_img);
@@ -101,26 +196,44 @@ public class ReplyActivity extends AppCompatActivity {
         Intent intent = getIntent();
         login_id = intent.getStringExtra("login_id");
         check = intent.getIntExtra("checked",0);
+        delete_authority = intent.getIntExtra("delete_authority",0);
 
         id_check = getSharedPreferences(check+"id_check",MODE_PRIVATE);
         final SharedPreferences.Editor edit_id_check = id_check.edit();
         txt = getSharedPreferences(check+"_reply",MODE_PRIVATE);
-        final SharedPreferences.Editor edit_txt = txt.edit();
+        edit_txt = txt.edit();
         img = getSharedPreferences(check+"_reimg",MODE_PRIVATE);
-        final SharedPreferences.Editor edit_img = img.edit();
+        edit_img = img.edit();
         re_id = getSharedPreferences(check+"_reid",MODE_PRIVATE);
-        final SharedPreferences.Editor edit_re_id = re_id.edit();
+        edit_re_id = re_id.edit();
         total = getSharedPreferences("total",MODE_PRIVATE);
         final SharedPreferences.Editor edit_total = total.edit();
+        size = getSharedPreferences("size",MODE_PRIVATE);
+        edit_size = size.edit();
         total_i = total.getInt(check+"total",0);
+        point = getSharedPreferences("point", MODE_PRIVATE);
+        edit_point = point.edit();
+        user_autho = getSharedPreferences(check+"autho",MODE_PRIVATE);
+        edit_user_autho = user_autho.edit();
 
         /*Shared 초기화*/
 //        edit_id_check.clear().commit();
 //        edit_img.clear().commit();
 //        edit_re_id.clear().commit();
 //        edit_total.clear().commit();
-//        edit_txt.clear().commit();;
+//        edit_txt.clear().commit();
+//        edit_size.clear().commit();
+//        edit_user_autho.clear().commit();
 
+         /*작성 권한 체크*/
+        bad_reply =0;
+        for(int ch =1 ; ch<= user_autho.getInt("total_autho",1); ch=ch+1){
+            String idc=user_autho.getString(""+ch,"empty");
+            if( login_id.equals(idc)){
+                Toast.makeText(ReplyActivity.this, "당신은 더 이상 이 게시글에 댓글을 작성할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                bad_reply=1;
+            }
+        }
 
         for(int Li =0; Li <= total_i-1; Li = Li+1){
             String txt_rep = txt.getString(""+Li, "no_text");
@@ -156,22 +269,11 @@ public class ReplyActivity extends AppCompatActivity {
         String strimg = profileimg.getString(login_id,"");
         if (strimg == ""){
             pro_img.setImageResource(R.drawable.profile_btn);
-        } else{
+        } else {
             bitmap = StringToBitMap(strimg);
             pro_img.setImageBitmap(bitmap);
         }
         id_txt.setText(name.getString(login_id,""));
-
-
-//        for(int count = 0 ; count <= 10 ; count = count + 1){
-//
-//
-//            String retxt;
-//            String reid;
-//            ReplyItem repItems = new ReplyItem();
-//            re_i.add(count);
-//            replyItems.add(repItems);
-//        }
 
         final ListView listView_re = (ListView) findViewById(R.id.listview_reply);
         listView_re.setAdapter(replyAdapter);
@@ -181,25 +283,19 @@ public class ReplyActivity extends AppCompatActivity {
         listView_re.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                int check_position_listnum = re_i.get(position);
-                String idee = replyItems.get(position).getId_check();
+                posi = position;
+                check_position_listnum = re_i.get(position);
+                idee = replyItems.get(position).getId_check();
 
                 if(login_id.equals(idee)){
                    dialog_delete();
+                } else if (delete_authority ==1){
+                    if(point.getInt(login_id,0)>=100){
+                        dialog_delete_autho();
+                    }
                 } else {
-                    Toast.makeText(ReplyActivity.this, "삭제 권한이 없습니다."+idee+"내 아이디"+login_id,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ReplyActivity.this, "삭제 권한이 없습니다.",Toast.LENGTH_SHORT).show();
                 }
-                        if(dialog_i ==1){
-                            edit_txt.remove(""+check_position_listnum).commit();
-                            edit_img.remove(""+check_position_listnum).commit();
-                            edit_re_id.remove(""+check_position_listnum).commit();
-                            re_i.remove(position);
-
-                            replyItems.remove(position);
-                            dialog_i=0;
-                        }
-
 
                 replyAdapter.notifyDataSetChanged();
                 return true;
@@ -210,27 +306,38 @@ public class ReplyActivity extends AppCompatActivity {
         reply_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(re_txt.getText().toString().equals("")){
-                    Toast.makeText(ReplyActivity.this, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show();
+
+                if (bad_reply ==1) {
+                    Toast.makeText(ReplyActivity.this, "작성자의 요청으로 게시글에 댓글을 작성할 수 없습니다", Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
-                    String retxt = re_txt.getText().toString();
-                    Bitmap bitmap = ((BitmapDrawable)pro_img.getDrawable()).getBitmap();
-                    String str_bitmap = BitMapToString(bitmap);
-                    String reply_name = id_txt.getText().toString();
+                    if (re_txt.getText().toString().equals("")) {
+                        Toast.makeText(ReplyActivity.this, "내용을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String retxt = re_txt.getText().toString();
+                        Bitmap bitmap = ((BitmapDrawable) pro_img.getDrawable()).getBitmap();
+                        String str_bitmap = BitMapToString(bitmap);
+                        String reply_name = id_txt.getText().toString();
 
-                    edit_txt.putString(""+total_i, retxt).commit();
-                    edit_img.putString(""+total_i, str_bitmap).commit();
-                    edit_re_id.putString(""+total_i,reply_name).commit();
-                    edit_id_check.putString(""+total_i, login_id).commit();
-                    ReplyItem reItem = new ReplyItem(retxt, bitmap, reply_name, login_id);
-                    replyItems.add(reItem);
-                    re_i.add(total_i);
-                    total_i = total_i+1;
-                    edit_total.putInt(check+"total", total_i).commit();
+                        edit_txt.putString("" + total_i, retxt).commit();
+                        edit_img.putString("" + total_i, str_bitmap).commit();
+                        edit_re_id.putString("" + total_i, reply_name).commit();
+                        edit_id_check.putString("" + total_i, login_id).commit();
+                        ReplyItem reItem = new ReplyItem(retxt, bitmap, reply_name, login_id);
+                        replyItems.add(reItem);
+                        re_i.add(total_i);
+                        total_i = total_i + 1;
 
-                    re_txt.setText("");
-                    Toast.makeText(ReplyActivity.this, "댓글이 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    replyAdapter.notifyDataSetChanged();
+                        int size_item = replyItems.size();
+                        edit_size.putInt(check + "size", size_item).commit();
+                        edit_total.putInt(check + "total", total_i).commit();
+
+                        re_txt.setText("");
+                        Toast.makeText(ReplyActivity.this, "댓글이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                        replyAdapter.notifyDataSetChanged();
+                    }
+
+
                 }
             }
         });
