@@ -1,5 +1,6 @@
 package com.example.msi.ottzzang;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +34,8 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 
 public class SubMainActivity extends AppCompatActivity {
+
+    public static Activity submain_activity;
     int count;
     int checked;
     int call_value; // 게시판 총 갯수 저장하는 변수, 1씩 증가하면서 arraylist list_num저장
@@ -170,6 +173,7 @@ public class SubMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_submain);
 
+        submain_activity = SubMainActivity.this;
          /*Stetho----------------------------*/
         Stetho.initializeWithDefaults(this);
 
@@ -300,7 +304,8 @@ public class SubMainActivity extends AppCompatActivity {
         SharedPreferences.Editor edit_point = point.edit();
         SharedPreferences re_num =getSharedPreferences("re-num", MODE_PRIVATE);
         SharedPreferences.Editor edit_re_num = re_num.edit();
-
+        SharedPreferences profileimg = getSharedPreferences("profileimg",MODE_PRIVATE);
+         SharedPreferences.Editor edit_profileimg = profileimg.edit();
 
         SharedPreferences cart_on = getSharedPreferences("cart_on",MODE_PRIVATE);
         total_list_cart = getSharedPreferences("list_cart_total",MODE_PRIVATE); //찜목록 저장 갯수와 번호순으로 저장
@@ -320,6 +325,7 @@ public class SubMainActivity extends AppCompatActivity {
 
 
         //SharedPreferences 초기화
+//        edit_profileimg.clear().commit();
 //        edit_re_num.clear().commit();
 //        edit_point.clear().commit();
 //        edit_cart_like.clear().commit();

@@ -67,8 +67,5 @@ public class Board_read_Activity extends AppCompatActivity {
         contents_txt_read.setText(list_content.getString(String.valueOf(checked),"게시글이 삭제되어 내용을 확인할 수 없습니다."));
         writer_name_read.setText(list_writer.getString(String.valueOf(checked),""));
         final String log_id = login_id_check.getString(String.valueOf(checked),"no_writer");
-
-
-
     }
 }

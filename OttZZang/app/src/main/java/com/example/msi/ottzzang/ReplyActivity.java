@@ -234,6 +234,9 @@ public class ReplyActivity extends AppCompatActivity {
                 bad_reply=1;
             }
         }
+        if(delete_authority==1){
+            Toast.makeText(ReplyActivity.this, "당신의 게시물입니다. 포인트를 이용해서 악성 댓글을 지울 수 있습니다.", Toast.LENGTH_SHORT).show();
+        }
 
         for(int Li =0; Li <= total_i-1; Li = Li+1){
             String txt_rep = txt.getString(""+Li, "no_text");
