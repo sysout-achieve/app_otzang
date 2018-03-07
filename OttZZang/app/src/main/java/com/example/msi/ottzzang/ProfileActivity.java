@@ -111,7 +111,7 @@ public class ProfileActivity extends AppCompatActivity {
         final ImageView point_10 = (ImageView) findViewById(R.id.point_10);
         profile_image = (ImageView) findViewById(R.id.profile_image);
         Button picture_btn = (Button) findViewById(R.id.picture_btn);
-
+        ImageView logout = (ImageView) findViewById(R.id.logout);
 
         str_proimg = profileimg.getString(login_id,"");
         if(str_proimg == ""){
@@ -160,7 +160,26 @@ public class ProfileActivity extends AppCompatActivity {
         } else {
             setimg(point_10,0);
         }
+
         /*------------------------*/
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                startActivity(intent);
+                SubMainActivity subMainActivity = (SubMainActivity) SubMainActivity.submain_activity;
+                subMainActivity.finish();
+                finish();
+            }
+        });
+
+        point_n.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ProfileActivity.this, "포인트를 이용해서 자신이 작성한 게시글의 댓글을 관리하세요", Toast.LENGTH_LONG).show();
+
+            }
+        });
 
         save_btn_profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +192,6 @@ public class ProfileActivity extends AppCompatActivity {
                 } else {
                     str_proimg = null;
                 }
-
                 String new_name = name_txt.getText().toString();
                 String height = person_height.getText().toString();
                 String weight = person_weight.getText().toString();

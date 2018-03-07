@@ -77,7 +77,6 @@ public class Example_modifyActivity extends AppCompatActivity {
 
         requirePermission();
 
-
         Button camera_btn = (Button) findViewById(R.id.camera_btn);
         final ImageView picture = (ImageView) findViewById(R.id.picture_modi);
         final EditText length00 = (EditText) findViewById(R.id.length00_modi);
@@ -102,9 +101,6 @@ public class Example_modifyActivity extends AppCompatActivity {
         Bitmap bm = (Bitmap) intent.getParcelableExtra("profile") ;
         Bitmap resized = Bitmap.createScaledBitmap(bm, 250, 350, true);
         picture.setImageBitmap(resized);
-//        item1.setText(intent.getStringExtra("outer_info"));
-//        length00.setText(intent.getStringExtra("outer_size"));
-
 
         //아이디별 아우터 목록 저장하기 위한 Sharedpreferences
         final SharedPreferences total_list = getSharedPreferences(login_id+"_outer_total", MODE_PRIVATE);

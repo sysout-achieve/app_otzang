@@ -33,7 +33,6 @@ import java.util.Date;
 
 public class Example3Activity extends AppCompatActivity {
 
-        ArrayList<OuterItem> data;
         private String mCurrentPhotoPath;
         int camera_code = 10;
         int gallery_code = 20;
@@ -134,9 +133,7 @@ public class Example3Activity extends AppCompatActivity {
         Button image_btn = (Button) findViewById(R.id.image_btn);
         ImageView rot_btn_3 = (ImageView) findViewById(R.id.rot_btn_3);
 
-
             Toast.makeText(Example3Activity.this, "제품의 정보를 저장하여 인터넷 쇼핑에 활용해보세요.", Toast.LENGTH_SHORT).show();
-
 
         rot_btn_3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,7 +179,6 @@ public class Example3Activity extends AppCompatActivity {
                 }
             }
         });
-
 
         call_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -245,7 +241,6 @@ public class Example3Activity extends AppCompatActivity {
                     edit_phone.putString(String.valueOf(total_i), phone).commit();
                     edit_link.putString(String.valueOf(total_i), link).commit();
 
-
                     Intent intent_save = new Intent();
                     String[] send = new String[]{item_name, size};
 
@@ -254,7 +249,6 @@ public class Example3Activity extends AppCompatActivity {
                     setResult(5, intent_save);
                     finish();
                 }
-
             }
         });
     } //onCreate of End.
@@ -285,7 +279,6 @@ public class Example3Activity extends AppCompatActivity {
             Uri uri = data.getData();
             ImageView picture = (ImageView) findViewById(R.id.picture_upda);
             picture.setImageURI(uri);
-
         }
     }
 

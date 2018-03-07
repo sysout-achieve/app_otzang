@@ -26,5 +26,4 @@ public class OuterItem {
         this.outer_info = outer_info;
         this.outer_size = outer_size;
     }
-
 }

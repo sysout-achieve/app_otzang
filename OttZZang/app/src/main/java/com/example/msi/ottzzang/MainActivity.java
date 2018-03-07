@@ -1,6 +1,7 @@
 package com.example.msi.ottzzang;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -25,6 +28,9 @@ import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
 
+    Boolean logincheck;
+    SharedPreferences auto;
+    SharedPreferences.Editor edit_auto;
 
     void requirePermission(){//권한 요청 메소드
         String [] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.READ_CALENDAR,Manifest.permission.WRITE_CALENDAR,Manifest.permission.INTERNET};
@@ -39,8 +45,10 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),1);
         }
     }
-
-
+    private void open_loading(){
+        Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,19 +62,18 @@ public class MainActivity extends AppCompatActivity {
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
-
-
         /*Main*/
         requirePermission(); //메소드 실행
+//        open_loading();
+
+
+        auto = getSharedPreferences("auto", MODE_PRIVATE);
+        edit_auto = auto.edit();
 
         final SharedPreferences ID = getSharedPreferences("ID", MODE_PRIVATE);
-//        SharedPreferences.Editor ID_editor = ID.edit();
         final SharedPreferences name = getSharedPreferences("name", MODE_PRIVATE);
-//        SharedPreferences.Editor edit_name = name.edit();
         final SharedPreferences password = getSharedPreferences("password", MODE_PRIVATE);
-//        SharedPreferences.Editor edit_passwrod = password.edit();
         SharedPreferences email = getSharedPreferences("Email", MODE_PRIVATE);
-//        SharedPreferences.Editor edit_email = email.edit();
 
         final EditText id = (EditText) findViewById(R.id.id);//
         final EditText password_txt = (EditText) findViewById(R.id.password);
@@ -103,10 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent,010);
             }
         });
-
-
-
-
     }
 
     @Override

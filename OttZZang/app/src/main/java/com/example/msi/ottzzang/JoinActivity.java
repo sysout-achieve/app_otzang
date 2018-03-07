@@ -26,10 +26,8 @@ public class JoinActivity extends AppCompatActivity {
         final EditText input_name = (EditText)findViewById(R.id.input_name);
         final EditText input_password = (EditText)findViewById(R.id.input_password);
         final EditText input_email = (EditText)findViewById(R.id.input_email);
-        EditText input_check_answer = (EditText)findViewById(R.id.input_check_answer);
+        final EditText input_check_answer = (EditText)findViewById(R.id.input_check_answer);
         Button check_id_btn = (Button)findViewById(R.id.check_id_btn);
-        Button check_em_btn = (Button)findViewById(R.id.check_em_btn);
-        Button check_pass_btn = (Button)findViewById(R.id.check_pass_btn);
         Button join_finish_btn = (Button)findViewById(R.id.join_finish_btn);
 
         final SharedPreferences ID = getSharedPreferences("ID", MODE_PRIVATE);
@@ -58,6 +56,8 @@ public class JoinActivity extends AppCompatActivity {
 //                correct = input_id.getText().toString();
                if(input_id.getText().toString().equals("") || input_name.getText().toString().equals("") || input_password.getText().toString().equals("") ||input_email.getText().toString().equals("")) {
                    Toast.makeText(JoinActivity.this, "빈 항목을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
+               } else if(input_password.getText().toString().equals(input_check_answer.getText().toString())==false){
+                   Toast.makeText(JoinActivity.this, "비밀번호가 동일하지 않습니다.", Toast.LENGTH_SHORT).show();
                } else if (input_id.getText().toString().equals(ID_check)){
                    EditText input_name = (EditText) findViewById(R.id.input_name);
                    EditText input_password = (EditText) findViewById(R.id.input_password);

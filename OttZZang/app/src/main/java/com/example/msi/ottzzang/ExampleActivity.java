@@ -3,7 +3,9 @@ package com.example.msi.ottzzang;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,7 +33,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     int camera_code = 10;
     int gallery_code = 20;
-
+    int mDegree =0;
     void requirePermission(){//권한 요청 메소드
         String [] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CALL_PHONE,Manifest.permission.INTERNET};
         ArrayList<String> listPermissionsNeeded = new ArrayList<>();
@@ -47,21 +49,11 @@ public class ExampleActivity extends AppCompatActivity {
 
     }
 
-//
-//    public void click_call(Button btn, final EditText text){
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String number = text.getText().toString();
-//
-//                Intent intent = new Intent();
-//                intent.setAction(Intent.ACTION_DIAL);
-//                intent.setData(Uri.parse("tel:"+number));
-//                startActivity(intent);
-//
-//            }
-//        });
-//    }
+    public Bitmap rotateImg(Bitmap bitmap, float degree){
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap, 0,0, bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+    }
 
 
 
@@ -81,7 +73,7 @@ public class ExampleActivity extends AppCompatActivity {
 
 
         Button camera_btn = (Button) findViewById(R.id.camera_btn);
-        ImageView picture = (ImageView) findViewById(R.id.picture1_ex);
+        final ImageView picture = (ImageView) findViewById(R.id.picture1_ex);
         final EditText item1 = (EditText) findViewById(R.id.item_example_ex);
         TableLayout table = (TableLayout) findViewById(R.id.table);
         final EditText phone_num = (EditText) findViewById(R.id.phone_num_ex);
@@ -90,6 +82,16 @@ public class ExampleActivity extends AppCompatActivity {
         Button link_btn = (Button) findViewById(R.id.link_btn);
         Button save_btn = (Button) findViewById(R.id.save_btn_profile);
         Button image_btn = (Button) findViewById(R.id.image_btn);
+        ImageView btn = (ImageView) findViewById(R.id.btn);
+
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDegree = mDegree+90;
+                picture.setImageBitmap(rotateImg(BitmapFactory.decodeResource(getResources(),(R.drawable.outer1)),mDegree));
+            }
+        });
 
         image_btn.setOnClickListener(new View.OnClickListener() {
             @Override
